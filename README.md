@@ -8,6 +8,33 @@
 
 <!-- template:begin:header -->
 <!-- do not edit anything in this "template" block, its auto-generated -->
+
+<p align="center">
+  <a href="https://github.com/lrstanley/skills/tags">
+    <img title="Latest Semver Tag" src="https://img.shields.io/github/v/tag/lrstanley/skills?style=flat-square">
+  </a>
+  <a href="https://github.com/lrstanley/skills/commits/master">
+    <img title="Last commit" src="https://img.shields.io/github/last-commit/lrstanley/skills?style=flat-square">
+  </a>
+
+
+
+</p>
+<p align="center">
+  <a href="https://github.com/lrstanley/skills/issues?q=is:open+is:issue+label:bug">
+    <img title="Bug reports" src="https://img.shields.io/github/issues/lrstanley/skills/bug?label=issues&style=flat-square">
+  </a>
+  <a href="https://github.com/lrstanley/skills/issues?q=is:open+is:issue+label:enhancement">
+    <img title="Feature requests" src="https://img.shields.io/github/issues/lrstanley/skills/enhancement?label=feature%20requests&style=flat-square">
+  </a>
+  <a href="https://github.com/lrstanley/skills/pulls">
+    <img title="Open Pull Requests" src="https://img.shields.io/github/issues-pr/lrstanley/skills?label=prs&style=flat-square">
+  </a>
+  <a href="https://github.com/lrstanley/skills/discussions/new?category=q-a">
+    <img title="Ask a Question" src="https://img.shields.io/badge/support-ask_a_question!-blue?style=flat-square">
+  </a>
+  <a href="https://liam.sh/chat"><img src="https://img.shields.io/badge/discord-bytecord-blue.svg?style=flat-square" title="Discord Chat"></a>
+</p>
 <!-- template:end:header -->
 
 This repository contains skills I've tailored to my personal usecases/workflows. [view on skills.sh](https://skills.sh/lrstanley/skills)
@@ -25,7 +52,7 @@ npx skills add lrstanley/skills -g
      the community.
 * :raising_hand_man: Take a look at the [support](.github/SUPPORT.md) document on
      guidelines for tips on how to ask the right questions.
-* :lady_beetle: For all features/bugs/issues/questions/etc, [head over here](https://github.com/lrstanley/vex/issues/new/choose).
+* :lady_beetle: For all features/bugs/issues/questions/etc, [head over here](https://github.com/lrstanley/skills/issues/new/choose).
 <!-- template:end:support -->
 
 <!-- template:begin:contributing -->
@@ -37,7 +64,7 @@ npx skills add lrstanley/skills -g
     community.
 * :clipboard: Please review the [contributing](.github/CONTRIBUTING.md) doc for submitting
      issues/a guide on submitting pull requests and helping out.
-* :old_key: For anything security related, please review this repositories [security policy](https://github.com/lrstanley/vex/security/policy).
+* :old_key: For anything security related, please review this repositories [security policy](https://github.com/lrstanley/skills/security/policy).
 <!-- template:end:contributing -->
 
 <!-- template:begin:license -->
