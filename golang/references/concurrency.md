@@ -433,6 +433,42 @@ if ok := sem.TryAlloc(10); ok {
 }
 ```
 
+## Error Groups
+
+`conc.ErrorGroup` combines bounded concurrency with first-error-wins cancellation.
+Each spawned goroutine receives a derived context that is canceled when any
+goroutine returns a non-nil error, letting the rest bail out early:
+
+```go
+import "github.com/lrstanley/x/sync/conc"
+
+func fetchAll(ctx context.Context, urls []string) error {
+    g := conc.NewErrorGroup(ctx, 5) // at most 5 concurrent fetches; 0 = unlimited
+
+    for _, u := range urls {
+        g.Go(func(ctx context.Context) error {
+            req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+            if err != nil {
+                return err
+            }
+
+            resp, err := http.DefaultClient.Do(req)
+            if err != nil {
+                return err
+            }
+            defer resp.Body.Close()
+
+            if resp.StatusCode != http.StatusOK {
+                return fmt.Errorf("%s: unexpected status %d", u, resp.StatusCode)
+            }
+            return nil
+        })
+    }
+
+    return g.Wait() // blocks until all goroutines finish; returns the first error
+}
+```
+
 ## Pipeline Pattern
 
 ```go
@@ -483,4 +519,5 @@ func pipeline(ctx context.Context, input <-chan int) <-chan int {
 | Rate limiting/backpressure | Control request throughput and smooth bursty workloads. |
 | Semaphores | Limit how many tasks run concurrently at the same time. |
 | Weighted semaphores | Limit concurrency by resource cost when tasks have unequal weight. |
+| Error groups | Run subtasks concurrently with first-error cancellation and optional concurrency limits. |
 | Pipeline pattern | Build multi-stage processing flows connected by channels. |
