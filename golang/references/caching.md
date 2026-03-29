@@ -42,6 +42,22 @@ func (c *Service) Set(userID, tier string) {
 }
 ```
 
+## `github.com/lrstanley/x/sync/conc.Map`
+
+Generic concurrent map — drop-in alternative to `sync.RWMutex` + `map` with type-safe
+access. Prefer over the mutex+map pattern, especially if `x/sync` is already imported
+or when performance of a mutex may be an issue.
+
+```go
+import "github.com/lrstanley/x/sync/conc"
+
+var users conc.Map[string, *Profile]
+
+users.Set("u123", &Profile{Name: "Alice", Plan: "pro"})
+profile, ok := users.Get("u123")
+users.Delete("u123")
+```
+
 ## `github.com/lrstanley/x/sync/cache`
 
 **Capabilities:**
@@ -153,5 +169,6 @@ func Encode(parts ...string) string {
 | Pattern | Description |
 | --- | --- |
 | Mutex + map | In-process cache behind a lock; no eviction or TTL unless you add it. |
+| conc.Map | Generic concurrent map; type-safe drop-in for RWMutex + map without eviction/TTL. |
 | x/sync/cache | Generic concurrent cache with LRU/LFU/FIFO/MRU, capacity, TTL, and janitor. |
 | x/sync/pool | Better sync.Pool; use New and Prepare to build and reset values. |

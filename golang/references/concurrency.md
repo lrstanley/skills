@@ -217,6 +217,16 @@ func (c *Cache) Set(key, value string) {
     c.items[key] = value
 }
 
+// conc.Map -- generic concurrent map (simpler than RWMutex + map, more ergonomic than sync.Map).
+// Prefer conc.Map when the key set is dynamic and you need type-safe concurrent access.
+var m conc.Map[string, int]
+m.Set("hits", 1)
+v, ok := m.Get("hits")
+m.Delete("hits")
+for k, v := range m.Iter() { // Also has .Keys() and .Values() iterators.
+    fmt.Println(k, v)
+}
+
 // sync.Once for initialization
 type Service struct {
     once   sync.Once
@@ -515,6 +525,7 @@ func pipeline(ctx context.Context, input <-chan int) <-chan int {
 | Channel patterns (generator/fan-out/fan-in) | Stream data between concurrent stages and merge results safely. |
 | Select with timeout/done | Handle cancellation, timeouts, and multiple channel events in one place. |
 | Sync primitives | Protect shared mutable state with locks and one-time initialization. |
+| conc.Map | Generic concurrent map; simpler than RWMutex + map, type-safe unlike sync.Map. |
 | Atomic operations | Perform lock-free reads/writes for single-value shared state. |
 | Rate limiting/backpressure | Control request throughput and smooth bursty workloads. |
 | Semaphores | Limit how many tasks run concurrently at the same time. |
