@@ -41,6 +41,9 @@ This repository contains skills I've tailored to my personal usecases/workflows.
 
 ```bash
 npx skills add lrstanley/skills -g
+
+# specific skill, with auto-accept (default agent checks)
+npx skills add lrstanley/skills -s golang -g -y
 ```
 
 <!-- template:begin:support -->

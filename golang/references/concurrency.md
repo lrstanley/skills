@@ -280,15 +280,9 @@ func (s *Server) Run() {
 `atomic.Pointer[T]` publishes a **single pointer** atomically. Readers always see either the previous or the next value—never a torn write. The pointed-to value should be **immutable after publish** (or treated as read-only by consumers); to "update", allocate a new `T` and `Store` it.
 
 ```go
-import (
-    "sync/atomic"
-    "time"
-)
+import "sync/atomic"
 
-type Config struct {
-    MaxRetries int
-    Timeout    time.Duration
-}
+// [...]
 
 type Service struct {
     cfg atomic.Pointer[Config]
@@ -327,9 +321,8 @@ func (s *Service) MaxRetries() int {
 ```go
 import "golang.org/x/time/rate"
 
-// Token bucket rate limiter
 type RateLimiter struct {
-    limiter *rate.Limiter
+    limiter *rate.Limiter // Token bucket rate limiter
 }
 
 func NewRateLimiter(rps int) *RateLimiter {
@@ -342,7 +335,7 @@ func (rl *RateLimiter) Process(ctx context.Context, item string) error {
     if err := rl.limiter.Wait(ctx); err != nil {
         return err
     }
-    // Process item
+    // [...]
     return nil
 }
 ```
@@ -380,7 +373,7 @@ func main() {
 
     for range 10 {
         sem.Go(func() {
-            // Stuff.
+            // [...]
         })
     }
 
@@ -389,7 +382,7 @@ func main() {
         sem.Alloc()
         go func() {
             defer sem.Free()
-            // Stuff.
+            // [...]
         }()
     }
 
@@ -397,11 +390,7 @@ func main() {
 }
 ```
 
-Weighted semaphore -- when tasks consume **different amounts** of a shared resource
-(memory budget, API rate-limit cost, connection slots, etc.). Each call declares
-how much capacity it needs; the semaphore ensures the combined weight of all active
-holders never exceeds the configured maximum. Waiters are served FIFO, so large
-requests at the head of the queue block smaller later ones to prevent starvation:
+Weighted semaphore — use when tasks need different amounts of a limited resource (like memory or API calls). Each task asks for how much it needs. The semaphore makes sure the total used never goes over the limit. Big requests at the front might make small ones wait, preventing starvation.
 
 ```go
 import "github.com/lrstanley/x/sync/conc"
@@ -436,47 +425,83 @@ if err := sem.Alloc(ctx, 30); err != nil { // block until 30 units are available
 }
 defer sem.Free(30)
 
-// TryAlloc is the non-blocking variant -- useful for optimistic fast-paths.
-if ok := sem.TryAlloc(10); ok {
+if ok := sem.TryAlloc(10); ok { // Non-blocking variant for fast-paths.
     defer sem.Free(10)
-    // got the extra capacity
+    // [...]
 }
 ```
 
-## Error Groups
+## Concurrent Groups
 
-`conc.ErrorGroup` combines bounded concurrency with first-error-wins cancellation.
-Each spawned goroutine receives a derived context that is canceled when any
-goroutine returns a non-nil error, letting the rest bail out early:
+`conc.Group` and its derivatives coordinate goroutines with optional concurrency
+limits, error collection, context propagation, and ordered result gathering.
+All types use a builder pattern — configuration methods (`With*`) chain from
+the constructor and panic if called after `Go()`. After `Wait()` returns,
+groups are reusable with the same configuration.
+
+### Group (fire-and-forget)
 
 ```go
 import "github.com/lrstanley/x/sync/conc"
 
-func fetchAll(ctx context.Context, urls []string) error {
-    g := conc.NewErrorGroup(ctx, 5) // at most 5 concurrent fetches; 0 = unlimited
-
-    for _, u := range urls {
-        g.Go(func(ctx context.Context) error {
-            req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-            if err != nil {
-                return err
-            }
-
-            resp, err := http.DefaultClient.Do(req)
-            if err != nil {
-                return err
-            }
-            defer resp.Body.Close()
-
-            if resp.StatusCode != http.StatusOK {
-                return fmt.Errorf("%s: unexpected status %d", u, resp.StatusCode)
-            }
-            return nil
-        })
-    }
-
-    return g.Wait() // blocks until all goroutines finish; returns the first error
+g := conc.NewGroup().WithMaxGoroutines(5) // omit for unlimited
+for range 10 {
+    g.Go(func() {
+        // [...]
+    })
 }
+g.Wait() // re-panics if any task panicked
+```
+
+### ErrorGroup (tasks return errors)
+
+```go
+eg := conc.NewGroup().WithErrors().WithMaxGoroutines(5)
+eg.Go(func() error { return nil })
+err := eg.Wait() // errors.Join of all errors; use WithFirstError for only the first
+```
+
+### ContextGroup (shared context + errors)
+
+```go
+cg := conc.NewGroup().
+    WithContext(ctx).
+    WithMaxGoroutines(5).
+    WithFailFast() // shorthand for WithCancelOnError + WithFirstError
+
+for _, u := range urls {
+    cg.Go(func(ctx context.Context) error {
+        // ctx canceled when any task errors (with WithCancelOnError/WithFailFast)
+        // [...]
+    })
+}
+err := cg.Wait() // derived context always canceled after Wait returns
+```
+
+### ResultGroup (tasks return a value)
+
+```go
+rg := conc.NewResultGroup[int]().WithMaxGoroutines(5)
+for i := range 10 {
+    rg.Go(func() int { return i * 2 })
+}
+results := rg.Wait() // []int in submission order; re-panics if any task panicked
+```
+
+### ResultContextGroup (context + result + error)
+
+```go
+rcg := conc.NewResultGroup[string]().
+    WithContext(ctx).
+    WithMaxGoroutines(5).
+    WithFailFast()
+
+for _, u := range urls {
+    rcg.Go(func(ctx context.Context) (string, error) {
+        // [...]
+    })
+}
+results, err := rcg.Wait() // errored results excluded; use WithCollectErrored to keep them
 ```
 
 ## Pipeline Pattern
@@ -530,5 +555,5 @@ func pipeline(ctx context.Context, input <-chan int) <-chan int {
 | Rate limiting/backpressure | Control request throughput and smooth bursty workloads. |
 | Semaphores | Limit how many tasks run concurrently at the same time. |
 | Weighted semaphores | Limit concurrency by resource cost when tasks have unequal weight. |
-| Error groups | Run subtasks concurrently with first-error cancellation and optional concurrency limits. |
+| Concurrent groups | Builder-pattern goroutine coordination: Group, ErrorGroup, ContextGroup, ResultGroup, ResultContextGroup. |
 | Pipeline pattern | Build multi-stage processing flows connected by channels. |
