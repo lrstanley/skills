@@ -2,7 +2,7 @@
 
 ## Overview
 
-`github.com/lrstanley/x/scheduler` manages background jobs for long-running backend/daemon applications. It supports interval-based jobs, crontab-style schedules, and always-on workers. The scheduler listens for `SIGINT`/`SIGTERM` and coordinates graceful shutdown of all jobs.
+`github.com/lrstanley/x/sync/scheduler` manages background jobs for long-running backend/daemon applications. It supports interval-based jobs, crontab-style schedules, and always-on workers. The scheduler listens for `SIGINT`/`SIGTERM` and coordinates graceful shutdown of all jobs.
 
 Pairs naturally with `clix` (see `references/cli-tools.md`) but has no hard dependency on it -- any `context.Context` and `*slog.Logger` work.
 
