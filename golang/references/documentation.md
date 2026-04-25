@@ -56,11 +56,11 @@ Use this structure for exported functions and complex internal functions. Omit s
 //
 // Example (when it's not obvious, and public):
 //
-//	result, err := pkg.FuncName(arg1, arg2)
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
-//	fmt.Println(result)
+//    result, err := pkg.FuncName(arg1, arg2)
+//    if err != nil {
+//        log.Fatal(err)
+//    }
+//    fmt.Println(result)
 func FuncName(paramName Type, anotherParam Type) (ResultType, error) {
 ```
 
@@ -159,9 +159,9 @@ Indent code examples by one tab in doc comments. godoc renders these as formatte
 //
 // Example:
 //
-//	names := []string{"alice", "bob"}
-//	upper := Transform(names, strings.ToUpper)
-//	// upper: ["ALICE", "BOB"]
+//    names := []string{"alice", "bob"}
+//    upper := Transform(names, strings.ToUpper)
+//    // upper: ["ALICE", "BOB"]
 func Transform[T any, U any](slice []T, fn func(T) U) []U {
     // [...]
 }

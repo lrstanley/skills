@@ -135,6 +135,7 @@ No specific headers are required.
 - Cross-reference related skills where relevant.
 - Include "when to use" and "when not to use" guidance.
 - Practical patterns over theoretical explanations.
+- Do not use em-dashes, smart quotes, or other non-ASCII characters for formatting.
 
 ### Framework Idiom Principle
 
@@ -177,7 +178,7 @@ and code organization take precedence over cross-project consistency.
 3. Create reference files for deep content (100+ lines)
 4. Add routing table linking topics to references
 5. Test skill triggers with realistic prompts
-6. Update SKILLS_GUIDE.md if adding new domain
+6. Add the skill to the **Skills** table in `README.md` (link to `SKILL.md`, one-line summary of capability and purpose)
 
 ### When Modifying Skills
 
@@ -186,3 +187,4 @@ and code organization take precedence over cross-project consistency.
 3. Preserve progressive disclosure structure
 4. Update related cross-references
 5. Verify routing table accuracy
+6. Keep `README.md` **Skills** table in sync when changes are substantial: new or removed skills, renamed skill directories, or material shifts in what the skill is for (typically reflected in frontmatter `description` or core scope). Routine reference edits or typo fixes that do not change purpose do not require a README update.

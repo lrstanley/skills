@@ -2,18 +2,19 @@
 # some skills adapted from & credit to: https://github.com/samber/cc-skills-golang
 name: golang
 description: >-
-  Implements idiomatic Go with concurrency, REST APIs, CLI tools, and performance optimization.
-  Use when building Go applications, designing interfaces, writing tests, profiling, or working
-  with goroutines, HTTP servers/clients, error handling, tracing, or structured logging.
+  Expert Go developer. Use when building Go applications, designing interfaces, writing tests,
+  profiling, working with goroutines, HTTP servers/clients, error handling, tracing,
+  CLI tools, generics, caching, writing Go documentation, structured logging, and more.
 license: MIT
 metadata:
   author: https://github.com/lrstanley
   version: "1.0.0"
   domain: language
-  triggers: Go, Golang, goroutines, channels, REST, microservices, generics, interfaces, CLI, TUI, ORM, database, pprof, benchmarks, testing, HTTP client, tracing, OpenTelemetry, OTEL, error handling, context, logging, documentation, godoc, clix, chix, caching
+  triggers: Go, Golang, goroutines, channels, REST, microservices, generics, interfaces, CLI, ORM, database, pprof, benchmarks, testing, HTTP client, tracing, OpenTelemetry, OTEL, error handling, context, logging, documentation, godoc, clix, chix, caching
   role: specialist
   scope: implementation
   output-format: code
+  related-skills: golang-tui
 ---
 
 # Golang
@@ -126,6 +127,7 @@ Key properties demonstrated: bounded goroutine lifetime via `ctx`, error propaga
 - Use reflection without performance justification
 - Mix sync and async patterns carelessly
 - Hardcode configuration (use functional options or env vars)
+- Implementing `min`, `max` or other functions that are now built-in (Go 1.21+)
 
 ## Output Templates
 

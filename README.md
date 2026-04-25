@@ -46,6 +46,13 @@ npx skills add lrstanley/skills -g
 npx skills add lrstanley/skills -s golang -g -y
 ```
 
+## :brain: Skills
+
+| Skill | Summary |
+| --- | --- |
+| [golang](golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
+| [golang-tui](golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
+
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->
 ## :raising_hand_man: Support & Assistance

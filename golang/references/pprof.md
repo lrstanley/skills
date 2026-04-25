@@ -108,31 +108,31 @@ runtime.SetBlockProfileRate(0)
 
 ```go
 import (
-	"os"
-	"runtime/pprof"
+    "os"
+    "runtime/pprof"
 )
 
 func writeCPU(path string) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if err := pprof.StartCPUProfile(f); err != nil {
-		return err
-	}
-	defer pprof.StopCPUProfile()
-	// ... work ...
-	return nil
+    f, err := os.Create(path)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
+    if err := pprof.StartCPUProfile(f); err != nil {
+        return err
+    }
+    defer pprof.StopCPUProfile()
+    // ... work ...
+    return nil
 }
 
 func writeHeap(path string) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	return pprof.WriteHeapProfile(f)
+    f, err := os.Create(path)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
+    return pprof.WriteHeapProfile(f)
 }
 ```
 
