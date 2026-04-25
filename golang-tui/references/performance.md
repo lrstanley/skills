@@ -246,7 +246,7 @@ Track `allocs/op` to catch regressions in rendering allocation count.
 | `ansi.Wordwrap(s, w)` | Word wrap preserving ANSI |
 | `ansi.Wrap(s, w)` | Wrap with custom breaks |
 | `ansi.Hardwrap(s, w)` | Hard wrap at exact width |
-| `lipgloss.Width(s)` | Alias for `ansi.StringWidth` |
+| `lipgloss.Width(s)` | `ansi.StringWidth` but accounts for max length over multiple newlines |
 | `lipgloss.Height(s)` | Count newlines |
 | `lipgloss.Size(s)` | Width and height |
 | `lipgloss.Wrap(s, w, breakChars)` | Word wrap preserving ANSI |
