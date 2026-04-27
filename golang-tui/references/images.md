@@ -226,7 +226,7 @@ you need them outside the View pass.
 - **Mosaic**: output includes ANSI color sequences (truecolor SGR) around block or
   space characters, not plain UTF-8 alone. Snapshot the full string and pin the
   `github.com/charmbracelet/x/mosaic` version, or assert on invariants (non-empty,
-  contains escape introducer) instead of unicode-only goldens.
+  contains escape introducer) instead of unicode-only snapshot files.
 - **Sixel/Kitty/iTerm2**: binary-heavy strings; prefer testing `Encode` helpers and
   small fixed `image.Image` fixtures rather than full PNGs.
 

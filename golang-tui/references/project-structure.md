@@ -2,7 +2,7 @@
 
 ## Recommended Layout
 
-```
+```text
 project/
   LICENSE
   README.md
@@ -140,7 +140,7 @@ tasks:
   test:update:
     desc: run tests and update snapshots
     cmds:
-      - UPDATE_SNAPS=always go test -count 2 -p 3
+      - UPDATE_SNAPSHOTS=true go test -count 2 -p 3
   lint:
     desc: run linter
     cmds:
