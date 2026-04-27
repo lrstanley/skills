@@ -70,7 +70,7 @@ func TestCommandPalette(t *testing.T) {
 	h.WaitContainsStrings(t, []string{"size=48x8", "vault read", "vault status"})
 	h.Type("status")
 	h.WaitContainsString(t, "query=status")
-	h.ExpectStringNotContains(t, "vault read secret/data/app")
+	h.AssertStringNotContains(t, "vault read secret/data/app")
 
 	h.Send(tea.KeyPressMsg(tea.Key{Code: tea.KeyEnter}))
 	selected := steep.WaitMessage[openCommandMsg](t, h)
@@ -152,8 +152,8 @@ func TestInventoryTable(t *testing.T) {
 		return m
 	})
 	h.WaitSettleView(t).
-		ExpectStringContains(t, "secret/app").
-		ExpectStringNotContains(t, "database", "token").
+		AssertStringContains(t, "secret/app").
+		AssertStringNotContains(t, "database", "token").
 		RequireSnapshotNoANSI(t, snapshot.WithSuffix("inventory"))
 }
 ```
@@ -169,15 +169,19 @@ func TestInventoryTable(t *testing.T) {
 - `WaitSettleView` waits until repeated `View` samples stop changing.
 - `Messages`, `MessagesOfType[T]`, `WaitMessage[T]`, `WaitMessages[T]`, and
   `WaitMessageWhere[T]` inspect observed messages.
-- `Dimensions`, `ExpectWidth`, `ExpectHeight`, and `ExpectDimensions` use
-  ANSI-aware display width.
+- `Dimensions`, `AssertWidth`, `RequireWidth`, `AssertHeight`, `RequireHeight`,
+  `AssertDimensions`, and `RequireDimensions` use ANSI-aware display width.
+- `Assert*` helpers report errors and keep the test running. Use `Require*`
+  helpers when the next step depends on the check passing and should stop
+  immediately.
 
-Package-level helpers work when you already have a simple value that implements
+Most helpers exist in both package-level and harness-level forms. Use the
+package-level helpers when you already have a simple value that implements
 `View() string` and do not need runtime behavior:
 
 ```go
-steep.ExpectStringContains(t, model, "ready")
-steep.ExpectDimensions(t, model, 80, 24)
+steep.AssertStringContains(t, model, "ready")
+steep.AssertDimensions(t, model, 80, 24)
 ```
 
 Harness methods are better when the test depends on window-size messages,
@@ -187,6 +191,16 @@ commands, key input, observed messages, snapshots, or final model state:
 h := steep.NewComponentHarness(t, model)
 h.Type("j")
 h.WaitContainsString(t, "selected")
+```
+
+Harness assertion and snapshot methods return `*Harness`, so they can be
+chained after settle-style waits:
+
+```go
+h.WaitSettleView(t).
+	AssertStringContains(t, "ready").
+	AssertStringNotContains(t, "loading").
+	RequireSnapshotNoANSI(t)
 ```
 
 Content waits return the matched view output, which is useful when the test
@@ -241,7 +255,7 @@ import (
 func TestStatusView(t *testing.T) {
 	view := "\x1b[32mcluster=acme-corp\x1b[0m\nstatus=unsealed\ntoken=s.dev-token\n"
 
-	snapshot.RequireEqual(
+	snapshot.AssertEqual(
 		t,
 		view, // Or yourModel.View()
 		snapshot.WithSuffix("status"),
@@ -253,9 +267,12 @@ func TestStatusView(t *testing.T) {
 }
 ```
 
+Use `snapshot.RequireEqual` when a mismatch should stop the test immediately.
 For harnesses, use convenience methods:
 
 ```go
+h.AssertSnapshot(t, snapshot.WithSuffix("ansi"))
+h.AssertSnapshotNoANSI(t, snapshot.WithSuffix("plain"))
 h.RequireSnapshot(t, snapshot.WithSuffix("ansi"))
 h.RequireSnapshotNoANSI(t, snapshot.WithSuffix("plain"))
 ```
