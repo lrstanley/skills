@@ -9,7 +9,7 @@ metadata:
   author: https://github.com/lrstanley
   version: "1.0.0"
   domain: frontend
- triggers: TUI, terminal UI, Bubble Tea, bubbletea, Lip Gloss, lipgloss, Bubbles, charm, terminal app, Elm Architecture, bubbletint, steep, teatest, go-snaps, go-snap, golden files, x/exp/golden, snapshot testing, tea.Model, tea.Cmd, tea.View, terminal styling, terminal components, Go TUI, TERM, COLORTERM, bracketed paste, PasteMsg, Kitty keyboard, OSC 9, terminal progress
+  triggers: TUI, terminal UI, Bubble Tea, bubbletea, Lip Gloss, lipgloss, Bubbles, charm, terminal app, Elm Architecture, bubbletint, steep, teatest, go-snaps, go-snap, golden files, x/exp/golden, snapshot testing, tea.Model, tea.Cmd, tea.View, terminal styling, terminal components, Go TUI, TERM, COLORTERM, bracketed paste, PasteMsg, Kitty keyboard, OSC 9, terminal progress
   role: expert
   scope: implementation
   output-format: code
