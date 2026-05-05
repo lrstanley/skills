@@ -116,7 +116,7 @@ Key properties demonstrated: bounded goroutine lifetime via `ctx`, error propaga
 - Write table-driven tests with subtests
 - Document all exported functions, types, and packages
 - Propagate errors with `fmt.Errorf("%w", err)`, `errors.Join`
-- Run race detector on tests (`-race` flag)
+- Run tests with `-race` (race detector), `-count N`, `-cpu 1,8`, `-timeout T`
 
 ### MUST NOT DO
 
@@ -128,6 +128,9 @@ Key properties demonstrated: bounded goroutine lifetime via `ctx`, error propaga
 - Mix sync and async patterns carelessly
 - Hardcode configuration (use functional options or env vars)
 - Implementing `min`, `max` or other functions that are now built-in (Go 1.21+)
+- Explicitly define a variable that is only consumed in one place (e.g. `foo := bar(); use(foo)`, just do `use(bar())` instead)
+- Use legacy `foo := foo` in loops on Go 1.22+ codebases
+- Fork a dependency and patch it locally unless explicitly asked to do so (implement workaroudn OR halt and ask how to proceed)
 
 ## Output Templates
 
