@@ -44,6 +44,8 @@ npx skills add lrstanley/skills -g
 
 # specific skill, with auto-accept (default agent checks)
 npx skills add lrstanley/skills -s golang -g -y
+npx skills add lrstanley/skills -s golang-tui -g -y
+npx skills add lrstanley/skills -s grill-me -g -y
 ```
 
 ## :brain: Skills
@@ -52,6 +54,7 @@ npx skills add lrstanley/skills -s golang -g -y
 | --- | --- |
 | [golang](golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
 | [golang-tui](golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
+| [grill-me](grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->
