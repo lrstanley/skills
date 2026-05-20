@@ -52,7 +52,7 @@ Load detailed guidance based on context:
 | Project Structure | `references/project-structure.md` | Module layout, internal packages, go.mod |
 | CLI Tools | `references/cli-tools.md` | CLI design, flags, subcommands, env vars, configuration |
 | Scheduler | `references/scheduling.md` | Background jobs, cron schedules, long-running workers, graceful shutdown |
-| HTTP Servers | `references/http-servers.md` | HTTP routing, middleware, logging, error handling, API design |
+| HTTP Servers | `references/http-servers.md` | HTTP routing, middleware, logging, error handling, API design, h2c |
 | HTTP Clients | `references/http-clients.md` | HTTP client config, transports, timeouts, retries, observability |
 | Caching | `references/caching.md` | In-memory caching, FIFO, LRU, TTL |
 

@@ -134,6 +134,35 @@ srv := &http.Server{
 }
 ```
 
+### HTTP/2 Cleartext (h2c)
+
+Use h2c when a reverse proxy terminates TLS and forwards HTTP/2 cleartext to the
+backend. This is RFC 9113 "HTTP/2 with Prior Knowledge": the client speaks HTTP/2
+from the first byte without an upgrade dance. Long-lived streams (SSE, WebSockets)
+benefit when the platform propagates client disconnects over HTTP/2 but not HTTP/1.1.
+
+Go 1.24+ enables h2c on `http.Server` without `golang.org/x/net/http2/h2c`:
+
+```go
+srv := &http.Server{
+    Addr:              ":8080",
+    Handler:           r,
+    ReadHeaderTimeout: 5 * time.Second,
+    ReadTimeout:       10 * time.Second,
+    WriteTimeout:      35 * time.Second,
+    IdleTimeout:       620 * time.Second, // long-lived SSE; tune for your proxy
+}
+srv.Protocols = new(http.Protocols)
+srv.Protocols.SetHTTP1(true)
+srv.Protocols.SetUnencryptedHTTP2(true)
+```
+
+Verify locally with prior-knowledge HTTP/2 (fails if h2c is not configured):
+
+```bash
+curl -i --http2-prior-knowledge http://localhost:8080/
+```
+
 ---
 
 ## chix v2: Production HTTP Toolkit
