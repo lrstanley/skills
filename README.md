@@ -19,6 +19,10 @@
 
 
 
+  <a href="https://codecov.io/gh/lrstanley/skills">
+    <img title="Code Coverage" src="https://img.shields.io/codecov/c/github/lrstanley/skills/master?style=flat-square">
+  </a>
+
 </p>
 <p align="center">
   <a href="https://github.com/lrstanley/skills/issues?q=is:open+is:issue+label:bug">
