@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+  default:
+    desc: Symlink local skills into ~/.agents/skills (runs install:symlink)
+    cmds:
+      - task: install:symlink
+  install:symlink:
+    desc: Symlink each repo skill with SKILL.md into ~/.agents/skills
+    cmds:
+      - ./.github/scripts/install-symlinks.sh
+  sync:
+    desc: Sync remote skills from remotes.yaml into the repo
+    cmds:
+      - ./.github/scripts/update-remotes.py
+  up:
+    desc: Update remotes.yaml commit SHAs to HEAD and sync into repo
+    cmds:
+      - ./.github/scripts/update-remotes.py --update

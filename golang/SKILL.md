@@ -8,7 +8,6 @@ description: >-
 license: MIT
 metadata:
   author: https://github.com/lrstanley
-  version: "1.0.0"
   domain: language
   triggers: Go, Golang, goroutines, channels, REST, microservices, generics, interfaces, CLI, ORM, database, pprof, benchmarks, testing, HTTP client, tracing, OpenTelemetry, OTEL, error handling, context, logging, documentation, godoc, clix, chix, caching
   role: specialist

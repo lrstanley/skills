@@ -56,7 +56,6 @@ description: [Brief capability statement]. Use when [triggering conditions] - ma
 license: MIT
 metadata:
   author: https://github.com/lrstanley
-  version: "1.0.0"
   domain: frontend
   triggers: keyword1, keyword2, keyword3
   role: specialist

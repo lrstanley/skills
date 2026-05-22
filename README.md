@@ -46,6 +46,9 @@ npx skills add lrstanley/skills -g
 npx skills add lrstanley/skills -s golang -g -y
 npx skills add lrstanley/skills -s golang-tui -g -y
 npx skills add lrstanley/skills -s grill-me -g -y
+npx skills add lrstanley/skills -s nuclear-review -g -y
+npx skills add lrstanley/skills -s pr-review-canvas -g -y
+npx skills add lrstanley/skills -s verify-this -g -y
 ```
 
 ## :brain: Skills
@@ -55,6 +58,9 @@ npx skills add lrstanley/skills -s grill-me -g -y
 | [golang](golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
 | [golang-tui](golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
 | [grill-me](grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
+| [nuclear-review](nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
+| [pr-review-canvas](pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
+| [verify-this](verify-this/SKILL.md) | Validates claims with local baseline versus treatment evidence and returns a single verdict among VERIFIED, NOT VERIFIED, or INCONCLUSIVE. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->
