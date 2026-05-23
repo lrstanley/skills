@@ -60,6 +60,7 @@ npx skills add lrstanley/skills -s verify-this -g -y
 | Skill | Summary |
 | --- | --- |
 | [golang](golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
+| [golang-packages](golang-packages/SKILL.md) | Query pkg.go.dev for package and module metadata via pkgsite-cli or the v1beta REST API -- search, versions, symbols, vulnerabilities, and licenses. |
 | [golang-tui](golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
 | [grill-me](grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
 | [nuclear-review](nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
