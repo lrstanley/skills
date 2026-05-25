@@ -170,6 +170,22 @@ and code organization take precedence over cross-project consistency.
 
 ## Project Workflow
 
+### Remote Skills (`remotes.yaml`)
+
+Some skills are synced from upstream Git repositories rather than authored directly in
+this repo. **`remotes.yaml`** is the source of truth for which skills are remote-sourced
+and how they are customized.
+
+**Before modifying any skill, check `remotes.yaml` first.**
+
+- If the skill directory appears under a remote's `file_filters` `dest` entry, it is pulled
+  from upstream. Direct edits to files in that directory will be overwritten on the next sync.
+- If the remote entry lists `patches`, local customizations belong in `.github/patches/`.
+  Add or edit patch files there, register them under `patches` in `remotes.yaml`, then
+  re-sync with `task sync` (or `./.github/scripts/update-remotes.py --filter <remote-name>`).
+- To bump an upstream remote to a newer commit, use `task up` (or
+  `./.github/scripts/update-remotes.py --update`).
+
 ### When Creating New Skills
 
 1. Check existing skills for overlap
@@ -177,13 +193,20 @@ and code organization take precedence over cross-project consistency.
 3. Create reference files for deep content (100+ lines)
 4. Add routing table linking topics to references
 5. Test skill triggers with realistic prompts
-6. Add the skill to the **Skills** table in `README.md` (link to `SKILL.md`, one-line summary of capability and purpose)
+6. Add the skill to the **Skills** table in `README.md` (link to `SKILL.md`, one-line
+   summary of capability and purpose)
 
 ### When Modifying Skills
 
-1. Read the full current skill before editing
-2. Maintain capability + trigger description format (no process steps)
-3. Preserve progressive disclosure structure
-4. Update related cross-references
-5. Verify routing table accuracy
-6. Keep `README.md` **Skills** table in sync when changes are substantial: new or removed skills, renamed skill directories, or material shifts in what the skill is for (typically reflected in frontmatter `description` or core scope). Routine reference edits or typo fixes that do not change purpose do not require a README update.
+1. Check `remotes.yaml` first to see if the skill is synced from upstream and/or patched
+   (see **Remote Skills** above). Do not edit remote-synced skill files directly.
+2. Read the full current skill before editing
+3. Maintain capability + trigger description format (no process steps)
+4. Preserve progressive disclosure structure
+5. Update related cross-references
+6. Verify routing table accuracy
+7. Keep `README.md` **Skills** table in sync when changes are substantial: new or
+   removed skills, renamed skill directories, or material shifts in what the skill
+   is for (typically reflected in frontmatter `description` or core scope). Routine
+   reference edits or typo fixes that do not change purpose do not require a README
+   update.

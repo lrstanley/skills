@@ -25,7 +25,8 @@ remotes:
   - name: grill-me
     git_url: https://github.com/mattpocock/skills.git
     commit_sha: b8be62ffacb0118fa3eaa29a0923c87c8c11985c
-    patches: []
+    patches:
+      - .github/patches/grill-me-preferred-answers.patch
     file_filters:
       - src: skills/productivity/grill-me/**
         dest: grill-me/
