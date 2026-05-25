@@ -2,7 +2,7 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: 3347cbab5b54136f6fba0994c3a01a56f7fb7fca
+    commit_sha: 35f33923cde39e9c27d68d95517e4e4e83719c7c
     patches:
       - .github/patches/nuclear-review-rename.patch
     file_filters:
