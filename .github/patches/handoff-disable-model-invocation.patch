@@ -1,0 +1,12 @@
+diff --git a/skills/productivity/handoff/SKILL.md b/skills/productivity/handoff/SKILL.md
+index 0aa5b99..ec762d9 100644
+--- a/skills/productivity/handoff/SKILL.md
++++ b/skills/productivity/handoff/SKILL.md
+@@ -2,6 +2,7 @@
+ name: handoff
+ description: Compact the current conversation into a handoff document for another agent to pick up.
+ argument-hint: "What will the next session be used for?"
++disable-model-invocation: true
+ ---
+ 
+ Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS - not the current workspace.
