@@ -48,7 +48,7 @@ Load detailed guidance based on context:
 | Logging | `references/logging.md` | Structured logging, JSON logging |
 | JSON | `references/json.md` | `encoding/json/v2`, struct tags, Options |
 | Tracing | `references/tracing.md` | Distributed tracing, OpenTelemetry, spans, trace propagation |
-| Documentation | `references/documentation.md` | Code comments, godoc conventions, doc comment style |
+| Documentation | `references/documentation.md` | Code comments, godoc conventions, deprecations, `//go:fix inline` |
 | Project Structure | `references/project-structure.md` | Module layout, internal packages, go.mod |
 | CLI Tools | `references/cli-tools.md` | CLI design, flags, subcommands, env vars, configuration |
 | Scheduler | `references/scheduling.md` | Background jobs, cron schedules, long-running workers, graceful shutdown |

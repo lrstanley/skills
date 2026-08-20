@@ -96,13 +96,16 @@ func Parse(s string) (time.Duration, error) {
 
 ### Deprecated Functions
 
-Use the `Deprecated:` marker. godoc renders this with special styling:
+Use the `Deprecated:` marker. godoc renders this with special styling. When the
+old API is a wrapper or alias around the replacement, also add `//go:fix inline`
+so callers can migrate with `go fix` ([docs](https://go.dev/blog/inliner)):
 
 ```go
 // OldFunc does something.
 //
 // Deprecated: Use NewFunc instead. OldFunc will be removed in v3.0.0.
-func OldFunc() {}
+//go:fix inline
+func OldFunc() { NewFunc() }
 ```
 
 ### Interface Documentation
