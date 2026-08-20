@@ -424,6 +424,8 @@ func (m *MockUserRepository) SaveUser(ctx context.Context, user *User) error {
 }
 ```
 
+Generic methods (Go 1.27+) cannot appear on interfaces and cannot satisfy an interface method. Keep interface methods non-generic; put extra type parameters on a concrete type or a package-level function. See `references/generics.md`.
+
 ## Quick Reference
 
 | Pattern | Use Case | Key Principle |
@@ -435,3 +437,4 @@ func (m *MockUserRepository) SaveUser(ctx context.Context, user *User) error {
 | Embedding | Composition | Extend behavior without inheritance |
 | Functional options | Configuration | Flexible constructors |
 | Type assertions | Runtime checks | Safe downcasting |
+| No generic interface methods | Keep interfaces non-generic | Extra type params stay on concrete types |

@@ -86,9 +86,8 @@ func TestParallel(t *testing.T) {
     }
 
     for _, tt := range tests {
-        tt := tt // Capture range variable for parallel tests
         t.Run(tt.name, func(t *testing.T) {
-            t.Parallel() // Run subtests in parallel
+            t.Parallel()
 
             result := strings.ToUpper(tt.input)
             if result != tt.want {
@@ -283,7 +282,6 @@ func TestConcurrentAccess(t *testing.T) {
     // This will fail with -race if not synchronized
     for range 10 {
         wg.Go(func() {
-            defer wg.Done()
             counter++ // Data race!
         })
     }
@@ -317,9 +315,11 @@ func TestConcurrentAccessSafe(t *testing.T) {
 
 Package [`testing/synctest`](https://pkg.go.dev/testing/synctest) runs tests in an isolated **bubble**: goroutines started inside the bubble belong to it, `time` uses a **fake clock** per bubble (initial time is midnight UTC 2000-01-01), and time advances only when every goroutine in the bubble is **durably blocked** (e.g. channel ops on bubble channels, `time.Sleep`, `sync.WaitGroup.Wait` after `Add` in the bubble). Use it to test concurrent and timing-dependent code without real sleeps or wall-clock flakiness.
 
-**`synctest.Wait()`** blocks until every other goroutine in the bubble is durably blocked—handy to assert ordering before the fake clock steps forward.
+**`synctest.Wait()`** blocks until every other goroutine in the bubble is durably blocked. Use it to assert ordering before the fake clock steps forward.
 
-**Not durably blocking** (can stall the bubble or behave differently): mutex/RWMutex, I/O and network, arbitrary system calls. Prefer fakes (e.g. `net.Pipe`) instead of loopback sockets so goroutines are not stuck on I/O outside the bubble model.
+**`synctest.Sleep(d)`** (Go 1.27+) is `time.Sleep(d)` followed by `synctest.Wait()`. Prefer it in the test itself when the system under test also sleeps for the same duration: `time.Sleep` alone does not say which goroutine runs first after the clock advances, so the test can observe a still-unsettled system. `Sleep` waits until other bubble goroutines are durably blocked again.
+
+**Not durably blocking** (can stall the bubble or behave differently): mutex/RWMutex, I/O and network, arbitrary system calls. Prefer fakes (`net.Pipe`, or `httptest.NewTestServer` below) instead of loopback sockets so goroutines are not stuck on I/O outside the bubble model.
 
 Inside the callback, do not call `t.Run`, `t.Parallel`, or `t.Deadline`. Do not nest `synctest.Test`.
 
@@ -331,23 +331,72 @@ func TestTime(t *testing.T) {
             time.Sleep(1 * time.Second)
             t.Log(time.Since(start)) // always logs "1s"
         }()
-        time.Sleep(2 * time.Second) // the goroutine above will run before this Sleep returns
-        t.Log(time.Since(start))    // always logs "2s"
+        synctest.Sleep(2 * time.Second) // Sleep + Wait; the goroutine above has settled
+        t.Log(time.Since(start))        // always logs "2s"
     })
 }
 ```
+
+```go
+func TestContextWithTimeout(t *testing.T) {
+    synctest.Test(t, func(t *testing.T) {
+        ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
+        defer cancel()
+
+        synctest.Sleep(5*time.Second - time.Nanosecond)
+        if err := ctx.Err(); err != nil {
+            t.Fatalf("before timeout: ctx.Err() = %v, want nil", err)
+        }
+
+        synctest.Sleep(time.Nanosecond)
+        if err := ctx.Err(); err != context.DeadlineExceeded {
+            t.Fatalf("after timeout: ctx.Err() = %v, want DeadlineExceeded", err)
+        }
+    })
+}
+```
+
+## `httptest.NewTestServer`
+
+[`httptest.NewTestServer`](https://pkg.go.dev/net/http/httptest#NewTestServer) (Go 1.27+) creates a test server on an **in-memory fake network**. Use it for handler tests instead of `httptest.NewServer` (loopback). It registers `t.Cleanup` to shut the server down, fails the test if the handler panics (other than `http.ErrAbortHandler`), and returns a client that sends **all** requests to the server regardless of URL host.
+
+The in-memory network is suitable for `testing/synctest` bubbles. Loopback `NewServer` / `Start` is not: goroutines blocked on real network I/O are not durably blocked.
+
+```go
+func TestHealth(t *testing.T) {
+    handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        io.WriteString(w, `{"status":"ok"}`)
+    })
+
+    srv := httptest.NewTestServer(t, handler)
+    resp, err := srv.Client().Get("http://example.com/health")
+    if err != nil {
+        t.Fatal(err)
+    }
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        t.Fatalf("status = %d, want 200", resp.StatusCode)
+    }
+}
+```
+
+Call `srv.Start()` or `srv.StartTLS()` only when a real loopback listener is required (for example, testing with `http.DefaultClient` and `srv.URL`). Most tests should stay on the in-memory network and use `srv.Client()`.
+
+If the handler is nil, the server answers every request with 500; it does not use `http.DefaultServeMux`.
 
 ## Integration Tests
 
 ```go
 // integration_test.go
-// +build integration
+//go:build integration
 
 package myapp
 
 import (
+    "net/http/httptest"
     "testing"
-    "time"
 )
 
 func TestIntegration(t *testing.T) {
@@ -355,20 +404,15 @@ func TestIntegration(t *testing.T) {
         t.Skip("skipping integration test in short mode")
     }
 
-    // Long-running integration test
-    server := startTestServer(t)
-    defer server.Stop()
-
-    time.Sleep(100 * time.Millisecond) // Wait for server
-
-    client := NewClient(server.URL)
-    resp, err := client.Get("/health")
+    srv := httptest.NewTestServer(t, appHandler())
+    resp, err := srv.Client().Get("http://example.com/health")
     if err != nil {
         t.Fatalf("health check failed: %v", err)
     }
+    defer resp.Body.Close()
 
-    if resp.Status != "ok" {
-        t.Errorf("expected status ok, got %s", resp.Status)
+    if resp.StatusCode != http.StatusOK {
+        t.Errorf("expected status 200, got %d", resp.StatusCode)
     }
 }
 
@@ -418,3 +462,5 @@ func ExampleKeys() {
 | `go test -short` | Skip long tests |
 | `go test -fuzz FuzzName` | Run fuzzing |
 | `go test -v -race -count 10 -cpu 1,4 -timeout 30s` | Miscellaneous testing flags |
+
+Use `synctest.Test` + `synctest.Sleep` for fake-clock concurrency tests. Use `httptest.NewTestServer` for in-memory HTTP (including inside a synctest bubble).

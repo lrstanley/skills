@@ -103,7 +103,6 @@ func fanIn(ctx context.Context, channels ...<-chan int) <-chan int {
 
     for _, ch := range channels {
         wg.Go(func() {
-            defer wg.Done()
             for val := range ch {
                 select {
                 case out <- val:
@@ -122,6 +121,28 @@ func fanIn(ctx context.Context, channels ...<-chan int) <-chan int {
     return out
 }
 ```
+
+## Goroutine leaks
+
+A leaked goroutine is blocked on a channel, mutex, `sync.Cond`, or similar primitive that can never be unblocked. The usual cause is an early return that stops receiving while senders still run:
+
+```go
+ch := make(chan result)
+for _, w := range ws {
+    go func() {
+        res, err := processWorkItem(w)
+        ch <- result{res, err}
+    }()
+}
+for range len(ws) {
+    r := <-ch
+    if r.err != nil {
+        return nil, r.err // remaining senders block forever on unbuffered ch
+    }
+}
+```
+
+Give every goroutine a bounded lifetime: drain the channel, buffer it, or select on `ctx.Done()`. Diagnose confirmed leaks with the `goroutineleak` pprof profile (`references/pprof.md`). That profile can miss leaks whose primitive is still reachable from a global or from a runnable goroutine.
 
 ## Select Statement Patterns
 
@@ -546,6 +567,7 @@ func pipeline(ctx context.Context, input <-chan int) <-chan int {
 | Pattern | Description |
 | --- | --- |
 | Goroutine lifecycle management | Run worker goroutines with explicit startup, shutdown, and cleanup. |
+| Goroutine leaks | Bound lifetimes; diagnose with `goroutineleak` (`references/pprof.md`). |
 | Panics in goroutines | Uncaught panics abort the program; `recover` at goroutine boundaries when failures must be isolated. |
 | Channel patterns (generator/fan-out/fan-in) | Stream data between concurrent stages and merge results safely. |
 | Select with timeout/done | Handle cancellation, timeouts, and multiple channel events in one place. |

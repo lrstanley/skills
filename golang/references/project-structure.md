@@ -42,7 +42,7 @@ myproject/
 
 module github.com/user/myproject
 
-go 1.26
+go 1.27
 
 require (
     github.com/gin-gonic/gin v1.9.1
@@ -137,11 +137,12 @@ package user
 import (
     "context"
     "time"
+    "uuid"
 )
 
 // User represents a user entity
 type User struct {
-    ID        string
+    ID        uuid.UUID
     Email     string
     CreatedAt time.Time
 }
@@ -149,9 +150,9 @@ type User struct {
 // Repository defines data access interface
 type Repository interface {
     Create(ctx context.Context, user *User) error
-    GetByID(ctx context.Context, id string) (*User, error)
+    GetByID(ctx context.Context, id uuid.UUID) (*User, error)
     Update(ctx context.Context, user *User) error
-    Delete(ctx context.Context, id string) error
+    Delete(ctx context.Context, id uuid.UUID) error
 }
 
 // Service handles business logic
@@ -166,7 +167,7 @@ func NewService(repo Repository) *Service {
 
 func (s *Service) RegisterUser(ctx context.Context, email string) (*User, error) {
     user := &User{
-        ID:        generateID(),
+        ID:        uuid.New(),
         Email:     email,
         CreatedAt: time.Now(),
     }
@@ -192,7 +193,7 @@ monorepo/
         └── user.go
 
 // go.work
-go 1.26
+go 1.27
 
 use (
     ./services/api

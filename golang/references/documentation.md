@@ -298,3 +298,15 @@ package config
 - Wrap comments at ~80 characters.
 - Always start comments with a capital letter unless referencing internal function/method/variable/etc names.
 - End comments with a period.
+
+## `go doc`
+
+Read local docs with `go doc` for known import paths. For search, versions, and reverse deps, see `golang-packages`.
+
+```bash
+go doc encoding/json/v2.Marshal
+go doc example.com/pkg@v1.2.3
+go doc -ex bytes.ExampleBuffer
+```
+
+`@version` requires Go 1.27+. Also: `-all`, `-src`, `-http`.

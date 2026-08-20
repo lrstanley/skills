@@ -9,16 +9,16 @@ license: MIT
 metadata:
   author: https://github.com/lrstanley
   domain: language
-  triggers: Go, Golang, goroutines, channels, REST, microservices, generics, interfaces, CLI, ORM, database, pprof, benchmarks, testing, HTTP client, tracing, OpenTelemetry, OTEL, error handling, context, logging, documentation, godoc, clix, chix, caching
+  triggers: Go, Golang, goroutines, channels, REST, microservices, generics, generic methods, interfaces, CLI, ORM, database, pprof, goroutineleak, benchmarks, testing, synctest, httptest, HTTP client, tracing, OpenTelemetry, OTEL, error handling, context, logging, JSON, encoding/json/v2, documentation, godoc, go doc, clix, chix, caching
   role: specialist
   scope: implementation
   output-format: code
-  related-skills: golang-tui
+  related-skills: golang-tui, golang-packages
 ---
 
 # Golang
 
-Senior Go developer with deep expertise in Go 1.26+, concurrent programming, and
+Senior Go developer with deep expertise in Go 1.27+, concurrent programming, and
 cloud-native microservices. Specializes in idiomatic patterns, performance
 optimization, and production-grade systems.
 
@@ -37,15 +37,16 @@ Load detailed guidance based on context:
 
 | Topic | Reference | Load When |
 | --- | --- | --- |
-| Concurrency | `references/concurrency.md` | Goroutines, channels, select, sync primitives |
+| Concurrency | `references/concurrency.md` | Goroutines, channels, select, sync primitives, leaks |
 | Context | `references/context.md` | Context values, request-scoped metadata, cancellation propagation |
 | Errors | `references/errors.md` | Error wrapping, sentinel errors, `errors.Is`/`As`, custom error types |
 | Interfaces | `references/interfaces.md` | Interface design, io.Reader/Writer, composition |
-| Generics | `references/generics.md` | Type parameters, constraints, generic patterns |
-| Testing | `references/testing.md` | Table-driven tests, subtests, mocks, fuzzing, coverage |
+| Generics | `references/generics.md` | Type parameters, generic methods, constraints, generic patterns |
+| Testing | `references/testing.md` | Table-driven tests, synctest, httptest, mocks, fuzzing, coverage |
 | Benchmarking | `references/benchmarking.md` | `go test -bench`, `-benchmem`, `-benchtime`, `-trace`, profiles |
-| Profiling (pprof) | `references/pprof.md` | CPU/heap profiles, `go tool pprof`, contention, leaks |
+| Profiling (pprof) | `references/pprof.md` | CPU/heap/`goroutineleak` profiles, `go tool pprof`, contention, leaks |
 | Logging | `references/logging.md` | Structured logging, JSON logging |
+| JSON | `references/json.md` | `encoding/json/v2`, struct tags, Options |
 | Tracing | `references/tracing.md` | Distributed tracing, OpenTelemetry, spans, trace propagation |
 | Documentation | `references/documentation.md` | Code comments, godoc conventions, doc comment style |
 | Project Structure | `references/project-structure.md` | Module layout, internal packages, go.mod |
@@ -130,6 +131,7 @@ Key properties demonstrated: bounded goroutine lifetime via `ctx`, error propaga
 - Explicitly define a variable that is only consumed in one place (e.g. `foo := bar(); use(foo)`, just do `use(bar())` instead)
 - Use legacy `foo := foo` in loops on Go 1.22+ codebases
 - Fork a dependency and patch it locally unless explicitly asked to do so (implement workaroudn OR halt and ask how to proceed)
+- Import `encoding/json` in new code; use `encoding/json/v2` (existing v1 call sites are fine)
 
 ## Output Templates
 
@@ -142,9 +144,10 @@ When implementing Go features, provide:
 
 ## Knowledge Reference
 
-Go 1.26+, goroutines, channels, select, sync package, generics, type parameters,
-constraints, io.Reader/Writer, context values, context cancellation, error wrapping,
-errors.Is/As, sentinel errors, pprof profiling, benchmarks, table-driven tests,
-fuzzing, go.mod, internal packages, functional options, errors.Join, CLI flag & env
-var parsing, HTTP routing, middleware, HTTP clients, transport wrappers, retries,
-structured logging, OpenTelemetry tracing, godoc conventions, API design.
+Go 1.27+, goroutines, channels, select, sync package, generics, generic methods,
+type parameters, constraints, io.Reader/Writer, context values, context cancellation,
+error wrapping, errors.Is/As, sentinel errors, pprof profiling, goroutineleak,
+benchmarks, table-driven tests, testing/synctest, httptest.NewTestServer, fuzzing,
+encoding/json/v2, go.mod, internal packages, functional options, errors.Join, CLI
+flag & env var parsing, HTTP routing, middleware, HTTP clients, transport wrappers,
+retries, structured logging, OpenTelemetry tracing, godoc, `go doc`, API design.

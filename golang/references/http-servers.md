@@ -340,6 +340,8 @@ r.Get("/api/users", func(w http.ResponseWriter, r *http.Request) {
 
 `chix.JSON` supports `?pretty=true` for human-readable output during development.
 
+When encoding JSON without chix (tests, libraries, non-chix handlers), use `encoding/json/v2` (`references/json.md`): `json.UnmarshalRead` for request bodies and `json.MarshalWrite` for responses.
+
 ### Static Files and SPA Serving
 
 `chix.UseStatic` serves embedded or on-disk files and supports single-page application (SPA) mode, where unmatched routes fall through to `index.html`.

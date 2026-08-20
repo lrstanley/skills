@@ -8,12 +8,55 @@
 | --- | --- | --- |
 | **CPU** | `go test -cpuprofile`, or `/debug/pprof/profile?seconds=N` | High CPU, slow code paths |
 | **Heap (allocations)** | `go test -memprofile`, or `/debug/pprof/heap` | GC pressure, allocation hot spots |
-| **Goroutine** | `/debug/pprof/goroutine` | Leaks, piles of blocked goroutines |
+| **Goroutine** | `/debug/pprof/goroutine` | All goroutines; blocked piles |
+| **Goroutine leak** | `/debug/pprof/goroutineleak` | Permanently blocked goroutines (channels, mutexes, `sync.Cond`) |
 | **Mutex** | `/debug/pprof/mutex` (must enable sampling first) | Lock contention |
 | **Block** | `/debug/pprof/block` (must enable sampling first) | Waits on channels, locks, sync |
 | **Threadcreate** | `/debug/pprof/threadcreate` | Unexpected OS thread churn |
 
-CPU sampling shows **on-CPU** time. It does not explain time blocked in I/O or sleeping—use **block**, **goroutine**, or **execution trace** (`go tool trace`) for that.
+CPU sampling shows **on-CPU** time. It does not explain time blocked in I/O or sleeping. Use **block**, **goroutine**, **goroutineleak**, or **execution trace** (`go tool trace`) for that.
+
+## Goroutine leak profile
+
+The `goroutineleak` profile (Go 1.27+) reports goroutines blocked on a concurrency primitive that cannot become unblocked. The runtime uses GC reachability: if goroutine G is blocked on primitive P, and P is unreachable from any runnable goroutine (or any goroutine those could unblock), then G can never wake.
+
+Typical leak: workers send on an unbuffered channel, and the collector returns early on the first error, so remaining senders block forever.
+
+```go
+ch := make(chan result)
+for _, w := range ws {
+    go func() {
+        res, err := processWorkItem(w)
+        ch <- result{res, err}
+    }()
+}
+for range len(ws) {
+    r := <-ch
+    if r.err != nil {
+        return nil, r.err // remaining senders leak
+    }
+}
+```
+
+Fix by giving senders a way out: buffer the channel, drain it, or select on `ctx.Done()`. Diagnose with:
+
+```bash
+go tool pprof http://localhost:6060/debug/pprof/goroutineleak
+curl -o leak.prof http://localhost:6060/debug/pprof/goroutineleak
+```
+
+```go
+f, err := os.Create("goroutineleak.prof")
+if err != nil {
+    return err
+}
+defer f.Close()
+return pprof.Lookup("goroutineleak").WriteTo(f, 0)
+```
+
+The profile can miss leaks whose primitive is still reachable from a global or from a runnable goroutine's locals. It is not a substitute for bounded goroutine lifetimes (see `references/concurrency.md`).
+
+Tracebacks for modules with `go 1.27` or later include pprof goroutine labels in the header. Disable with `GODEBUG=tracebacklabels=0` if labels must not appear in dumps.
 
 ## Heap metrics: what to open in pprof
 
@@ -67,6 +110,7 @@ Import the pprof HTTP handlers (typically `import _ "net/http/pprof"` on your de
 go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
 go tool pprof -alloc_objects http://localhost:6060/debug/pprof/heap
 go tool pprof http://localhost:6060/debug/pprof/goroutine
+go tool pprof http://localhost:6060/debug/pprof/goroutineleak
 go tool pprof http://localhost:6060/debug/pprof/mutex
 go tool pprof http://localhost:6060/debug/pprof/block
 ```
@@ -169,7 +213,7 @@ top                  # hottest by flat time (default)
 top -cum             # hottest by cumulative time
 top 5                # only top 5
 list mypkg.FuncName  # source lines with costs
-peek json.Marshal    # one-hop callers and callees
+peek mypkg.Parse     # one-hop callers and callees
 tree                 # hierarchical tree
 traces               # raw stacks (spot unexpected paths)
 ```
@@ -275,7 +319,7 @@ go tool pprof -inuse_space -top mem.prof
 | CPU pegged, slow handler | CPU profile |
 | GC pauses, high alloc rate | Heap `-alloc_objects` |
 | RSS / heap growing | Heap `-inuse_space`, two snapshots + `-base` |
-| Goroutine count exploding | Goroutine profile or `?debug=2` |
+| Goroutine count exploding | Goroutine profile, `goroutineleak`, or `?debug=2` |
 | Lock storms | Mutex profile (enable fraction first) |
 | Everything blocked | Block profile (enable rate first) |
 
@@ -293,6 +337,7 @@ go tool pprof -inuse_space -top mem.prof
 | `go tool pprof -inuse_space mem.prof` | Heap: live bytes |
 | `go tool pprof -base a.prof b.prof` | Diff `b` vs `a` |
 | `go tool pprof http://host:6060/debug/pprof/profile?seconds=30` | Live CPU sample |
+| `go tool pprof http://host:6060/debug/pprof/goroutineleak` | Leaked goroutines |
 
 ## pprof vs execution trace
 

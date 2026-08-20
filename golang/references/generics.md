@@ -108,6 +108,20 @@ stringStack.Push("hello")
 stringStack.Push("world")
 ```
 
+## Generic Methods (Go 1.27+)
+
+Methods may declare their own type parameters, independent of the receiver. Use when an operation belongs on a type but needs an extra type argument.
+
+```go
+type Box[T any] struct{ v T }
+
+func (b Box[T]) Map[U any](f func(T) U) Box[U] {
+    return Box[U]{v: f(b.v)}
+}
+```
+
+Interfaces cannot declare type-parameterized methods, and a generic method cannot satisfy an interface method. Use a package-level function when the operation must appear in an interface.
+
 ## Generic Map Operations
 
 ```go
@@ -231,6 +245,8 @@ idx, found := Find([]string{"a", "b", "c"}, "b") // 1, true
 ```
 
 ## Generic Interfaces
+
+Generic interface *types* (`Container[T]`) are allowed. Type parameters on individual interface methods are not; see Generic Methods above.
 
 ```go
 // Generic interface
@@ -381,14 +397,17 @@ func Serialize[T Serializable](data T) []byte {
 ## Quick Reference
 
 - Use builtin types and constraints when possible.
-- Use builtin generic methods when possible (`slices`, `maps`, etc).
+- Use stdlib generic helpers when possible (`slices`, `maps`, `cmp`, and so on).
+- Prefer a generic method when the operation belongs on one concrete type and does not need to satisfy an interface.
 
 | Feature | Syntax | Use Case |
 |---------|--------|----------|
 | Basic generic | `func F[T any]()` | Any type |
 | Constraint | `func F[T Constraint]()` | Restricted types |
 | Multiple params | `func F[T, U any]()` | Multiple type variables |
+| Generic method | `func (T) M[U any]()` | Extra type params on a method |
 | Comparable | `func F[T comparable]()` | Types supporting == and != |
 | Ordered | `func F[T constraints.Ordered]()` | Types supporting <, >, <=, >= |
 | Union | `T interface{int \| string}` | Either type |
 | Approximate | `~int` | Include type aliases |
+| Promoted literal key | `User{ID: 7}` | Embedded field in a struct literal |

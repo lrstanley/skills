@@ -34,7 +34,7 @@ Introduced in the [pkg.go.dev API blog post](https://go.dev/blog/pkgsite-api).
 
 ## When Not to Use
 
-- Reading documentation for packages in the local module cache (use `go doc`)
+- Reading documentation for a known import path, including `package@version` (use `go doc`)
 - Serving docs for local or private packages (use `cmd/pkgsite` web server)
 - Resolving ambiguous import paths without specifying the module
 
@@ -103,7 +103,7 @@ pkgsite-cli search -json -limit 10 uuid | jq '.items[].packagePath'
 
 | Tool | Scope |
 | --- | --- |
-| `go doc` | Local module cache |
+| `go doc` | Package/symbol docs, including `package@version` |
 | `cmd/pkgsite` | Local web server for downloaded packages |
 | `pkgsite-cli` | Remote metadata: search, versions, vulns, imported-by, licenses |
 | REST API | Same data as CLI; best for application integrations |
