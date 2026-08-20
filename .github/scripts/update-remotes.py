@@ -152,9 +152,9 @@ def apply_patches(work_dir: Path, patches: list[str]) -> None:
             )
 
 
-def top_level_dest_dirs(file_filters: list[dict[str, str]]) -> set[str]:
+def top_level_dest_dirs(file_includes: list[dict[str, str]]) -> set[str]:
     dirs: set[str] = set()
-    for entry in file_filters:
+    for entry in file_includes:
         dest = entry["dest"].strip("/")
         if not dest:
             continue
@@ -183,11 +183,25 @@ def is_single_file_pattern(src: str) -> bool:
     return "*" not in src
 
 
-def iter_matched_paths(clone_root: Path, src: str) -> list[Path]:
+def is_excluded(rel_path: str, file_excludes: list[dict[str, str]]) -> bool:
+    for entry in file_excludes:
+        if wglob.globmatch(rel_path, entry["src"], flags=GLOB_FLAGS):
+            return True
+    return False
+
+
+def iter_matched_paths(
+    clone_root: Path,
+    src: str,
+    file_excludes: list[dict[str, str]] | None = None,
+) -> list[Path]:
+    excludes = file_excludes or []
     if is_single_file_pattern(src):
         candidate = clone_root / src
         if candidate.is_file():
-            return [candidate]
+            rel = candidate.relative_to(clone_root).as_posix()
+            if not is_excluded(rel, excludes):
+                return [candidate]
         return []
 
     matches: list[Path] = []
@@ -195,6 +209,8 @@ def iter_matched_paths(clone_root: Path, src: str) -> list[Path]:
         if not path.is_file():
             continue
         rel = path.relative_to(clone_root).as_posix()
+        if is_excluded(rel, excludes):
+            continue
         if wglob.globmatch(rel, src, flags=GLOB_FLAGS):
             matches.append(path)
     return sorted(matches)
@@ -210,11 +226,12 @@ def sync_file_filter(
     repo_root: Path,
     src: str,
     dest: str,
+    file_excludes: list[dict[str, str]] | None = None,
 ) -> None:
     if is_tree_glob(src):
         prefix = tree_glob_prefix(src)
         dest_base = dest.rstrip("/")
-        for matched in iter_matched_paths(clone_root, src):
+        for matched in iter_matched_paths(clone_root, src, file_excludes):
             rel = matched.relative_to(clone_root).as_posix()
             if not rel.startswith(prefix):
                 continue
@@ -224,14 +241,14 @@ def sync_file_filter(
         return
 
     if is_single_file_pattern(src):
-        matched = iter_matched_paths(clone_root, src)
+        matched = iter_matched_paths(clone_root, src, file_excludes)
         if not matched:
             raise click.ClickException(f"no files matched src pattern: {src}")
         copy_file_preserve_mode(matched[0], repo_root / dest)
         return
 
     dest_base = dest.rstrip("/")
-    for matched in iter_matched_paths(clone_root, src):
+    for matched in iter_matched_paths(clone_root, src, file_excludes):
         rel = matched.relative_to(clone_root).as_posix()
         target = repo_root / dest_base / rel
         copy_file_preserve_mode(matched, target)
@@ -247,7 +264,8 @@ def sync_remote(
     git_url = remote["git_url"]
     commit_sha = remote["commit_sha"]
     patches = remote.get("patches") or []
-    file_filters = remote["file_filters"]
+    file_includes = remote["file_includes"]
+    file_excludes = remote.get("file_excludes") or []
 
     cache_key = (git_url, commit_sha)
     if cache_key not in clone_cache:
@@ -265,14 +283,14 @@ def sync_remote(
         click.echo(f"[{name}] applying {len(patches)} patch(es)")
         apply_patches(work_dir, patches)
 
-    dest_dirs = top_level_dest_dirs(file_filters)
+    dest_dirs = top_level_dest_dirs(file_includes)
     delete_dest_dirs(repo_root, dest_dirs)
 
-    for entry in file_filters:
+    for entry in file_includes:
         src = entry["src"]
         dest = entry["dest"]
         click.echo(f"[{name}] syncing {src} -> {dest}")
-        sync_file_filter(work_dir, repo_root, src, dest)
+        sync_file_filter(work_dir, repo_root, src, dest, file_excludes)
 
 
 def cleanup_temp_dirs(temp_dirs: list[Path]) -> None:

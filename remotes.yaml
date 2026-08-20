@@ -2,10 +2,10 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: ec44aed93cda65227954d46c75be3a2f218144a3
+    commit_sha: fd6dd6f7276956a532bb78a748a8d2818b6eb5f4
     patches:
       - .github/patches/nuclear-review-rename.patch
-    file_filters:
+    file_includes:
       # pr-review-canvas
       - src: cursor-team-kit/skills/pr-review-canvas/**
         dest: pr-review-canvas/
@@ -19,16 +19,11 @@ remotes:
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
-    commit_sha: e3b90b5238f38cdea5996e16861dcae28ef52eda
-    patches:
-      - .github/patches/grill-me-preferred-answers.patch
-      - .github/patches/handoff-disable-model-invocation.patch
-    file_filters:
-      - src: skills/productivity/grill-me/**
-        dest: grill-me/
-      - src: LICENSE
-        dest: grill-me/LICENSE
+    commit_sha: 885e2ca4d842d139e9aef4e48d366c63cb1b8013
+    file_includes:
       - src: skills/productivity/handoff/**
         dest: handoff/
       - src: LICENSE
         dest: handoff/LICENSE
+    file_excludes:
+      - src: skills/productivity/handoff/agents/**

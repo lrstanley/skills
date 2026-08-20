@@ -10,7 +10,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "git_url", "commit_sha", "file_filters"],
+        "required": ["name", "git_url", "commit_sha", "file_includes"],
         "additionalProperties": false,
         "properties": {
           "name": {
@@ -32,7 +32,7 @@
               "pattern": "^\\.github/patches/[a-z0-9._-]+\\.patch$"
             }
           },
-          "file_filters": {
+          "file_includes": {
             "type": "array",
             "minItems": 1,
             "items": {
@@ -45,6 +45,20 @@
                   "minLength": 1
                 },
                 "dest": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "file_excludes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["src"],
+              "additionalProperties": false,
+              "properties": {
+                "src": {
                   "type": "string",
                   "minLength": 1
                 }

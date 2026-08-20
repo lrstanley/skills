@@ -178,7 +178,7 @@ and how they are customized.
 
 **Before modifying any skill, check `remotes.yaml` first.**
 
-- If the skill directory appears under a remote's `file_filters` `dest` entry, it is pulled
+- If the skill directory appears under a remote's `file_includes` `dest` entry, it is pulled
   from upstream. Direct edits to files in that directory will be overwritten on the next sync.
 - If the remote entry lists `patches`, local customizations belong in `.github/patches/`.
   Add or edit patch files there, register them under `patches` in `remotes.yaml`, then
