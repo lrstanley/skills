@@ -61,6 +61,7 @@ npx skills add lrstanley/skills -s remotion-best-practices -g -y
 npx skills add lrstanley/skills -s mermaid-diagrams -g -y
 npx skills add lrstanley/skills -s kubernetes-specialist -g -y
 npx skills add lrstanley/skills -s tui-design -g -y
+npx skills add lrstanley/skills -s documentation-writer -g -y
 npx skills add lrstanley/skills -s verify-this -g -y
 ```
 
@@ -73,6 +74,7 @@ npx skills add lrstanley/skills -s verify-this -g -y
 | [golang-tui](golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
 | [grill-me](grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
 | [handoff](handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to continue the work from a clean context. |
+| [documentation-writer](documentation-writer/SKILL.md) | Diataxis-guided technical documentation -- tutorials, how-to guides, reference, and explanations with audience-first structure. |
 | [nuclear-review](nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
 | [pr-review-canvas](pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
 | [karpathy-guidelines](karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
