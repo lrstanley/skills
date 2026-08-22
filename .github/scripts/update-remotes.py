@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import shutil
@@ -25,6 +26,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent.parent
 DEFAULT_CONFIG = REPO_ROOT / "remotes.yaml"
 SCHEMA_PATH = REPO_ROOT / ".github" / "schemas" / "remotes.json"
+CLONE_CACHE_ROOT = REPO_ROOT / "tmp" / "remote-clones"
 
 GLOB_FLAGS = wglob.GLOBSTAR | wglob.BRACE | wglob.EXTGLOB
 
@@ -81,6 +83,40 @@ def update_commit_shas(data: dict[str, Any]) -> None:
 def write_config(config_path: Path, data: dict[str, Any], yaml: YAML) -> None:
     with config_path.open("w", encoding="utf-8") as handle:
         yaml.dump(data, handle)
+
+
+def clone_cache_key(git_url: str, commit_sha: str) -> str:
+    digest = hashlib.sha256(f"{git_url}\0{commit_sha}".encode()).hexdigest()
+    return digest[:16]
+
+
+def clone_cache_dir(git_url: str, commit_sha: str) -> Path:
+    return CLONE_CACHE_ROOT / clone_cache_key(git_url, commit_sha)
+
+
+def is_valid_cached_clone(cache_dir: Path, commit_sha: str) -> bool:
+    if not cache_dir.is_dir() or not (cache_dir / ".git").is_dir():
+        return False
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=cache_dir,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return False
+    return result.stdout.strip() == commit_sha
+
+
+def ensure_clone(git_url: str, commit_sha: str, cache_dir: Path, name: str) -> None:
+    CLONE_CACHE_ROOT.mkdir(parents=True, exist_ok=True)
+    if is_valid_cached_clone(cache_dir, commit_sha):
+        click.echo(f"[{name}] using cached clone @ {commit_sha[:8]}")
+        return
+    if cache_dir.exists():
+        shutil.rmtree(cache_dir)
+    click.echo(f"[{name}] cloning {git_url} @ {commit_sha[:8]}")
+    clone_at_commit(git_url, commit_sha, cache_dir)
 
 
 def clone_at_commit(git_url: str, commit_sha: str, dest: Path) -> None:
@@ -257,8 +293,7 @@ def sync_file_filter(
 def sync_remote(
     remote: dict[str, Any],
     repo_root: Path,
-    clone_cache: dict[tuple[str, str], Path],
-    temp_dirs: list[Path],
+    ephemeral_dirs: list[Path],
 ) -> None:
     name = remote["name"]
     git_url = remote["git_url"]
@@ -267,17 +302,12 @@ def sync_remote(
     file_includes = remote["file_includes"]
     file_excludes = remote.get("file_excludes") or []
 
-    cache_key = (git_url, commit_sha)
-    if cache_key not in clone_cache:
-        cache_dir = Path(tempfile.mkdtemp(prefix="remote-clone-"))
-        temp_dirs.append(cache_dir)
-        click.echo(f"[{name}] cloning {git_url} @ {commit_sha[:8]}")
-        clone_at_commit(git_url, commit_sha, cache_dir)
-        clone_cache[cache_key] = cache_dir
+    cache_dir = clone_cache_dir(git_url, commit_sha)
+    ensure_clone(git_url, commit_sha, cache_dir, name)
 
     work_dir = Path(tempfile.mkdtemp(prefix=f"remote-work-{name}-"))
-    temp_dirs.append(work_dir)
-    copy_clone(clone_cache[cache_key], work_dir)
+    ephemeral_dirs.append(work_dir)
+    copy_clone(cache_dir, work_dir)
 
     if patches:
         click.echo(f"[{name}] applying {len(patches)} patch(es)")
@@ -293,8 +323,8 @@ def sync_remote(
         sync_file_filter(work_dir, repo_root, src, dest, file_excludes)
 
 
-def cleanup_temp_dirs(temp_dirs: list[Path]) -> None:
-    for path in temp_dirs:
+def cleanup_ephemeral_dirs(ephemeral_dirs: list[Path]) -> None:
+    for path in ephemeral_dirs:
         if path.exists():
             shutil.rmtree(path, ignore_errors=True)
 
@@ -361,23 +391,22 @@ def main(
         click.echo("no remotes to sync")
         return
 
-    clone_cache: dict[tuple[str, str], Path] = {}
-    temp_dirs: list[Path] = []
+    ephemeral_dirs: list[Path] = []
 
     try:
         for remote in remotes:
-            sync_remote(remote, repo_root, clone_cache, temp_dirs)
+            sync_remote(remote, repo_root, ephemeral_dirs)
     except click.ClickException:
-        cleanup_temp_dirs(temp_dirs)
+        cleanup_ephemeral_dirs(ephemeral_dirs)
         raise
     except subprocess.CalledProcessError as exc:
-        cleanup_temp_dirs(temp_dirs)
+        cleanup_ephemeral_dirs(ephemeral_dirs)
         detail = exc.stderr or exc.stdout or str(exc)
         if isinstance(detail, bytes):
             detail = detail.decode()
         raise click.ClickException(f"git command failed: {detail.strip()}") from exc
     finally:
-        cleanup_temp_dirs(temp_dirs)
+        cleanup_ephemeral_dirs(ephemeral_dirs)
 
     click.echo("sync complete")
 
