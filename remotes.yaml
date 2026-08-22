@@ -2,7 +2,7 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: fd6dd6f7276956a532bb78a748a8d2818b6eb5f4
+    commit_sha: 46125561306434d8a1d7745d540d8932ab0cd2a2
     patches:
       - .github/patches/nuclear-review-rename.patch
     file_includes:
@@ -19,7 +19,7 @@ remotes:
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
-    commit_sha: 885e2ca4d842d139e9aef4e48d366c63cb1b8013
+    commit_sha: 5b15a47f2d7150f545fbcacbfe381787fc0230dc
     file_includes:
       - src: skills/productivity/handoff/**
         dest: handoff/
@@ -27,3 +27,60 @@ remotes:
         dest: handoff/LICENSE
     file_excludes:
       - src: skills/productivity/handoff/agents/**
+
+  - name: andrej-karpathy-skills
+    git_url: https://github.com/forrestchang/andrej-karpathy-skills.git
+    commit_sha: 2c606141936f1eeef17fa3043a72095b4765b9c2
+    file_includes:
+      - src: skills/karpathy-guidelines/**
+        dest: karpathy-guidelines/
+
+  - name: anthropics-skills
+    git_url: https://github.com/anthropics/skills.git
+    commit_sha: 3b3fad96af16a10759d930941b4520ba0c40edae
+    file_includes:
+      - src: skills/frontend-design/**
+        dest: frontend-design/
+
+  - name: shadcn-ui
+    git_url: https://github.com/shadcn/ui.git
+    commit_sha: 1773ecfeeb4a04366978d353e69b5c7ded78dcb2
+    file_includes:
+      - src: skills/shadcn/**
+        dest: shadcn/
+      - src: LICENSE.md
+        dest: shadcn/LICENSE
+
+  - name: remotion-skills
+    git_url: https://github.com/remotion-dev/skills.git
+    commit_sha: baf0b919ff90bc980e8d2b73eb65a124cd262a64
+    file_includes:
+      - src: skills/remotion-best-practices/**
+        dest: remotion-best-practices/
+
+  - name: softaworks-agent-toolkit
+    git_url: https://github.com/softaworks/agent-toolkit.git
+    commit_sha: 3027f20f3181758385a1bb8c022d4041dfb4de84
+    file_includes:
+      - src: skills/mermaid-diagrams/**
+        dest: mermaid-diagrams/
+      - src: LICENSE
+        dest: mermaid-diagrams/LICENSE
+
+  - name: jeffallan-claude-skills
+    git_url: https://github.com/jeffallan/claude-skills.git
+    commit_sha: 882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf
+    file_includes:
+      - src: skills/kubernetes-specialist/**
+        dest: kubernetes-specialist/
+      - src: LICENSE
+        dest: kubernetes-specialist/LICENSE
+
+  - name: hyperskills
+    git_url: https://github.com/hyperb1iss/hyperskills.git
+    commit_sha: ae3221140c06dc1482415533ead5c42e965297dc
+    file_includes:
+      - src: skills/tui-design/**
+        dest: tui-design/
+      - src: LICENSE
+        dest: tui-design/LICENSE

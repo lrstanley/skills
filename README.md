@@ -41,7 +41,9 @@
 </p>
 <!-- template:end:header -->
 
-This repository contains skills I've tailored to my personal usecases/workflows. [view on skills.sh](https://skills.sh/lrstanley/skills)
+This repository contains skills I've tailored to my personal usecases/workflows,
+and/or that I simply use frequently. [view on skills.sh](https://skills.sh/lrstanley/skills).
+See the [remotes.yaml](remotes.yaml) file for where some of these skills are sourced from.
 
 ```bash
 npx skills add lrstanley/skills -g
@@ -52,6 +54,13 @@ npx skills add lrstanley/skills -s golang-tui -g -y
 npx skills add lrstanley/skills -s grill-me -g -y
 npx skills add lrstanley/skills -s nuclear-review -g -y
 npx skills add lrstanley/skills -s pr-review-canvas -g -y
+npx skills add lrstanley/skills -s karpathy-guidelines -g -y
+npx skills add lrstanley/skills -s frontend-design -g -y
+npx skills add lrstanley/skills -s shadcn -g -y
+npx skills add lrstanley/skills -s remotion-best-practices -g -y
+npx skills add lrstanley/skills -s mermaid-diagrams -g -y
+npx skills add lrstanley/skills -s kubernetes-specialist -g -y
+npx skills add lrstanley/skills -s tui-design -g -y
 npx skills add lrstanley/skills -s verify-this -g -y
 ```
 
@@ -66,6 +75,13 @@ npx skills add lrstanley/skills -s verify-this -g -y
 | [handoff](handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to continue the work from a clean context. |
 | [nuclear-review](nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
 | [pr-review-canvas](pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
+| [karpathy-guidelines](karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
+| [frontend-design](frontend-design/SKILL.md) | Distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. |
+| [shadcn](shadcn/SKILL.md) | Manage shadcn components and projects -- adding, styling, debugging, and composing UI. |
+| [remotion-best-practices](remotion-best-practices/SKILL.md) | Best practices for Remotion video creation in React. |
+| [mermaid-diagrams](mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
+| [kubernetes-specialist](kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
+| [tui-design](tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->
