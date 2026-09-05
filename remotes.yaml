@@ -2,7 +2,7 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: 46125561306434d8a1d7745d540d8932ab0cd2a2
+    commit_sha: 93b00b89ef425a9c1bac0d0b317dfc49c930ac99
     patches:
       - .github/patches/nuclear-review-rename.patch
     file_includes:
@@ -19,7 +19,7 @@ remotes:
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
-    commit_sha: 5b15a47f2d7150f545fbcacbfe381787fc0230dc
+    commit_sha: 3cca18b368ae95cdbdebbff572ccafa662551015
     file_includes:
       - src: skills/productivity/handoff/**
         dest: handoff/
@@ -37,14 +37,14 @@ remotes:
 
   - name: anthropics-skills
     git_url: https://github.com/anthropics/skills.git
-    commit_sha: 3b3fad96af16a10759d930941b4520ba0c40edae
+    commit_sha: 41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f
     file_includes:
       - src: skills/frontend-design/**
         dest: frontend-design/
 
   - name: remotion-skills
     git_url: https://github.com/remotion-dev/skills.git
-    commit_sha: baf0b919ff90bc980e8d2b73eb65a124cd262a64
+    commit_sha: f54682712abc4a68cdc7c41513bd3b3298829873
     file_includes:
       - src: skills/remotion-best-practices/**
         dest: remotion-best-practices/
@@ -69,7 +69,7 @@ remotes:
 
   - name: hyperskills
     git_url: https://github.com/hyperb1iss/hyperskills.git
-    commit_sha: ae3221140c06dc1482415533ead5c42e965297dc
+    commit_sha: 5c2f96185a7ea1f9a3e9e397b1687f674c4c8c36
     file_includes:
       - src: skills/tui-design/**
         dest: tui-design/
