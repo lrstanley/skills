@@ -42,15 +42,6 @@ remotes:
       - src: skills/frontend-design/**
         dest: frontend-design/
 
-  - name: shadcn-ui
-    git_url: https://github.com/shadcn/ui.git
-    commit_sha: 1773ecfeeb4a04366978d353e69b5c7ded78dcb2
-    file_includes:
-      - src: skills/shadcn/**
-        dest: shadcn/
-      - src: LICENSE.md
-        dest: shadcn/LICENSE
-
   - name: remotion-skills
     git_url: https://github.com/remotion-dev/skills.git
     commit_sha: baf0b919ff90bc980e8d2b73eb65a124cd262a64

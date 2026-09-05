@@ -56,7 +56,6 @@ npx skills add lrstanley/skills -s nuclear-review -g -y
 npx skills add lrstanley/skills -s pr-review-canvas -g -y
 npx skills add lrstanley/skills -s karpathy-guidelines -g -y
 npx skills add lrstanley/skills -s frontend-design -g -y
-npx skills add lrstanley/skills -s shadcn -g -y
 npx skills add lrstanley/skills -s remotion-best-practices -g -y
 npx skills add lrstanley/skills -s mermaid-diagrams -g -y
 npx skills add lrstanley/skills -s kubernetes-specialist -g -y
@@ -79,7 +78,6 @@ npx skills add lrstanley/skills -s verify-this -g -y
 | [pr-review-canvas](pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
 | [karpathy-guidelines](karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
 | [frontend-design](frontend-design/SKILL.md) | Distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. |
-| [shadcn](shadcn/SKILL.md) | Manage shadcn components and projects -- adding, styling, debugging, and composing UI. |
 | [remotion-best-practices](remotion-best-practices/SKILL.md) | Best practices for Remotion video creation in React. |
 | [mermaid-diagrams](mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
 | [kubernetes-specialist](kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
