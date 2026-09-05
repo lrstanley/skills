@@ -75,3 +75,12 @@ remotes:
         dest: tui-design/
       - src: LICENSE
         dest: tui-design/LICENSE
+
+  - name: shadcn-vue
+    git_url: https://github.com/unovue/shadcn-vue.git
+    commit_sha: dd3ff4ccbb46a15081e841570e51a5a2ace095cf
+    file_includes:
+      - src: skills/shadcn-vue/**
+        dest: shadcn-vue/
+      - src: LICENSE
+        dest: shadcn-vue/LICENSE
