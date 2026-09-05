@@ -63,6 +63,9 @@ npx skills add lrstanley/skills -s kubernetes-specialist -g -y
 npx skills add lrstanley/skills -s tui-design -g -y
 npx skills add lrstanley/skills -s documentation-writer -g -y
 npx skills add lrstanley/skills -s verify-this -g -y
+npx skills add lrstanley/skills -s ponytail-audit -g -y
+npx skills add lrstanley/skills -s ponytail-review -g -y
+npx skills add lrstanley/skills -s ponytail -g -y
 ```
 
 ## :brain: Skills
@@ -84,6 +87,9 @@ npx skills add lrstanley/skills -s verify-this -g -y
 | [mermaid-diagrams](mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
 | [kubernetes-specialist](kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
 | [tui-design](tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
+| [ponytail-audit](ponytail-audit/SKILL.md) | Audit an entire repository for over-engineering and rank what to delete, simplify, or replace. |
+| [ponytail-review](ponytail-review/SKILL.md) | Review diffs exclusively for over-engineering, unnecessary dependencies, and speculative abstractions. |
+| [ponytail](ponytail/SKILL.md) | Favor the shortest working solution by prioritizing YAGNI, standard library, and native platform features. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->

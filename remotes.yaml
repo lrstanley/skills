@@ -84,3 +84,20 @@ remotes:
         dest: shadcn-vue/
       - src: LICENSE
         dest: shadcn-vue/LICENSE
+
+  - name: ponytail
+    git_url: https://github.com/DietrichGebert/ponytail.git
+    commit_sha: 974d940a1c5344210874150b98ff0d2c861fab6a
+    file_includes:
+      - src: skills/ponytail-audit/**
+        dest: ponytail-audit/
+      - src: LICENSE
+        dest: ponytail-audit/LICENSE
+      - src: skills/ponytail-review/**
+        dest: ponytail-review/
+      - src: LICENSE
+        dest: ponytail-review/LICENSE
+      - src: skills/ponytail/**
+        dest: ponytail/
+      - src: LICENSE
+        dest: ponytail/LICENSE
