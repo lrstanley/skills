@@ -90,6 +90,7 @@ npx skills add lrstanley/skills -s ponytail -g -y
 | [ponytail-audit](ponytail-audit/SKILL.md) | Audit an entire repository for over-engineering and rank what to delete, simplify, or replace. |
 | [ponytail-review](ponytail-review/SKILL.md) | Review diffs exclusively for over-engineering, unnecessary dependencies, and speculative abstractions. |
 | [ponytail](ponytail/SKILL.md) | Favor the shortest working solution by prioritizing YAGNI, standard library, and native platform features. |
+| [security-audit](security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->

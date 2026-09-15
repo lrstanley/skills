@@ -85,6 +85,15 @@ remotes:
       - src: LICENSE
         dest: shadcn-vue/LICENSE
 
+  - name: cloudflare-security-audit
+    git_url: https://github.com/cloudflare/security-audit-skill.git
+    commit_sha: c1c8a8c1471069fb0e188eeaff69b8e8db6564a8
+    file_includes:
+      - src: skills/security-audit/**
+        dest: security-audit/
+      - src: LICENSE
+        dest: security-audit/LICENSE
+
   - name: ponytail
     git_url: https://github.com/DietrichGebert/ponytail.git
     commit_sha: 974d940a1c5344210874150b98ff0d2c861fab6a
