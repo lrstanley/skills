@@ -2,7 +2,7 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: 93b00b89ef425a9c1bac0d0b317dfc49c930ac99
+    commit_sha: 6ed0f7a9504f577d7529064103cecce9be7dfc5e
     patches:
       - .github/patches/nuclear-review-rename.patch
     file_includes:
@@ -19,7 +19,7 @@ remotes:
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
-    commit_sha: 3cca18b368ae95cdbdebbff572ccafa662551015
+    commit_sha: c55ee46073ed923f86ce59a5eb3b6d895095d1b7
     file_includes:
       - src: skills/productivity/handoff/**
         dest: handoff/
@@ -37,14 +37,14 @@ remotes:
 
   - name: anthropics-skills
     git_url: https://github.com/anthropics/skills.git
-    commit_sha: 41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f
+    commit_sha: 34040c9c568585f6929bedeaad110ad08f079624
     file_includes:
       - src: skills/frontend-design/**
         dest: frontend-design/
 
   - name: remotion-skills
     git_url: https://github.com/remotion-dev/skills.git
-    commit_sha: f54682712abc4a68cdc7c41513bd3b3298829873
+    commit_sha: bbb139d5ba3709b1ffeb27184e9579c681230a08
     file_includes:
       - src: skills/remotion-best-practices/**
         dest: remotion-best-practices/
@@ -78,7 +78,7 @@ remotes:
 
   - name: shadcn-vue
     git_url: https://github.com/unovue/shadcn-vue.git
-    commit_sha: dd3ff4ccbb46a15081e841570e51a5a2ace095cf
+    commit_sha: 0f810bec6c2510ef064d9657dc7039927df1a240
     file_includes:
       - src: skills/shadcn-vue/**
         dest: shadcn-vue/
