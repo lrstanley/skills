@@ -9,6 +9,7 @@ metadata:
   role: specialist
   scope: document
   output-format: document
+  related-skills: unslop
 ---
 
 # Diataxis Documentation Expert

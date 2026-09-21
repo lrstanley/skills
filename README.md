@@ -84,6 +84,7 @@ npx skills add lrstanley/skills -s verify-this -g -y
 | [mermaid-diagrams](mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
 | [kubernetes-specialist](kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
 | [tui-design](tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
+| [unslop](unslop/SKILL.md) | Cut AI tells from writing by detecting and rewriting common AI-generated patterns. |
 | [security-audit](security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 | [simplify](simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
 

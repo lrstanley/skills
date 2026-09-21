@@ -16,6 +16,11 @@ remotes:
         dest: nuclear-review/
       - src: cursor-team-kit/LICENSE
         dest: nuclear-review/LICENSE
+      # unslop
+      - src: pstack/skills/unslop/**
+        dest: unslop/
+      - src: pstack/LICENSE
+        dest: unslop/LICENSE
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
