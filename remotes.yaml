@@ -2,7 +2,7 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: 6ed0f7a9504f577d7529064103cecce9be7dfc5e
+    commit_sha: ea32d9562a1c9f077d7cdd3be53d07383eb18866
     patches:
       - .github/patches/nuclear-review-rename.patch
     file_includes:
@@ -24,7 +24,7 @@ remotes:
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
-    commit_sha: c55ee46073ed923f86ce59a5eb3b6d895095d1b7
+    commit_sha: 49dd158d1076134a641b33efb035946536778336
     file_includes:
       - src: skills/productivity/handoff/**
         dest: skills/handoff/
@@ -42,14 +42,14 @@ remotes:
 
   - name: anthropics-skills
     git_url: https://github.com/anthropics/skills.git
-    commit_sha: 34040c9c568585f6929bedeaad110ad08f079624
+    commit_sha: dbd4588f9e1033efb41dad4bef2f7947c8993d44
     file_includes:
       - src: skills/frontend-design/**
         dest: skills/frontend-design/
 
   - name: remotion-skills
     git_url: https://github.com/remotion-dev/skills.git
-    commit_sha: bbb139d5ba3709b1ffeb27184e9579c681230a08
+    commit_sha: 32b241b97f4e0e4ab61fe9a41b05e6e64503f8c5
     file_includes:
       - src: skills/remotion-best-practices/**
         dest: skills/remotion-best-practices/
@@ -65,7 +65,7 @@ remotes:
 
   - name: jeffallan-claude-skills
     git_url: https://github.com/jeffallan/claude-skills.git
-    commit_sha: 882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf
+    commit_sha: 1be15d8064f88fc25216442406d40add8fd23b53
     file_includes:
       - src: skills/kubernetes-specialist/**
         dest: skills/kubernetes-specialist/
@@ -83,7 +83,7 @@ remotes:
 
   - name: shadcn-vue
     git_url: https://github.com/unovue/shadcn-vue.git
-    commit_sha: 0f810bec6c2510ef064d9657dc7039927df1a240
+    commit_sha: b251d9fd92aa496495e127137a7734704fb34a29
     file_includes:
       - src: skills/shadcn-vue/**
         dest: skills/shadcn-vue/
