@@ -124,6 +124,7 @@ npx skills add lrstanley/skills -s golang -g -y
 | [remotion-best-practices](skills/remotion-best-practices/SKILL.md) | Best practices for Remotion video creation in React. |
 | [mermaid-diagrams](skills/mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
 | [kubernetes-specialist](skills/kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
+| [kubernetes-upgrade-analysis](skills/kubernetes-upgrade-analysis/SKILL.md) | Read-only analysis of a cluster and its Flux/Argo CD repos ahead of a cluster or component upgrade -- API deprecations, per-component compatibility, upgrade headroom, and a standardized, skimmable report with a batched upgrade plan. |
 | [tui-design](skills/tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
 | [unslop](skills/unslop/SKILL.md) | Cut AI tells from writing by detecting and rewriting common AI-generated patterns. |
 | [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
