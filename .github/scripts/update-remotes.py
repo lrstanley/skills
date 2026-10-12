@@ -188,23 +188,33 @@ def apply_patches(work_dir: Path, patches: list[str]) -> None:
             )
 
 
-def top_level_dest_dirs(file_includes: list[dict[str, str]]) -> set[str]:
-    dirs: set[str] = set()
+def dest_roots(file_includes: list[dict[str, str]]) -> set[str]:
+    """
+    Returns the paths owned by a remote, which are wiped before each sync.
+
+    Remote content is always placed under a container directory (e.g.
+    "skills/") that is shared with locally authored content, so ownership is
+    scoped to the first two path components (e.g. "skills/golang"), rather
+    than the container itself.
+    """
+    roots: set[str] = set()
     for entry in file_includes:
-        dest = entry["dest"].strip("/")
-        if not dest:
+        parts = [part for part in entry["dest"].strip("/").split("/") if part]
+        if not parts:
             continue
-        top_level = dest.split("/", 1)[0]
-        if top_level:
-            dirs.add(top_level)
-    return dirs
+        if ".." in parts:
+            raise click.ClickException(f"dest escapes the repository: {entry['dest']}")
+        roots.add("/".join(parts[:2]))
+    return roots
 
 
-def delete_dest_dirs(repo_root: Path, dest_dirs: set[str]) -> None:
-    for dirname in sorted(dest_dirs):
-        target = repo_root / dirname
-        if target.exists():
+def delete_dest_roots(repo_root: Path, roots: set[str]) -> None:
+    for root in sorted(roots):
+        target = repo_root / root
+        if target.is_dir() and not target.is_symlink():
             shutil.rmtree(target)
+        elif target.exists() or target.is_symlink():
+            target.unlink()
 
 
 def is_tree_glob(src: str) -> bool:
@@ -313,8 +323,7 @@ def sync_remote(
         click.echo(f"[{name}] applying {len(patches)} patch(es)")
         apply_patches(work_dir, patches)
 
-    dest_dirs = top_level_dest_dirs(file_includes)
-    delete_dest_dirs(repo_root, dest_dirs)
+    delete_dest_roots(repo_root, dest_roots(file_includes))
 
     for entry in file_includes:
         src = entry["src"]

@@ -8,28 +8,28 @@ remotes:
     file_includes:
       # pr-review-canvas
       - src: cursor-team-kit/skills/pr-review-canvas/**
-        dest: pr-review-canvas/
+        dest: skills/pr-review-canvas/
       - src: cursor-team-kit/LICENSE
-        dest: pr-review-canvas/LICENSE
+        dest: skills/pr-review-canvas/LICENSE
       # thermo-nuclear-code-quality-review
       - src: cursor-team-kit/skills/thermo-nuclear-code-quality-review/**
-        dest: nuclear-review/
+        dest: skills/nuclear-review/
       - src: cursor-team-kit/LICENSE
-        dest: nuclear-review/LICENSE
+        dest: skills/nuclear-review/LICENSE
       # unslop
       - src: pstack/skills/unslop/**
-        dest: unslop/
+        dest: skills/unslop/
       - src: pstack/LICENSE
-        dest: unslop/LICENSE
+        dest: skills/unslop/LICENSE
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
     commit_sha: c55ee46073ed923f86ce59a5eb3b6d895095d1b7
     file_includes:
       - src: skills/productivity/handoff/**
-        dest: handoff/
+        dest: skills/handoff/
       - src: LICENSE
-        dest: handoff/LICENSE
+        dest: skills/handoff/LICENSE
     file_excludes:
       - src: skills/productivity/handoff/agents/**
 
@@ -38,63 +38,63 @@ remotes:
     commit_sha: 2c606141936f1eeef17fa3043a72095b4765b9c2
     file_includes:
       - src: skills/karpathy-guidelines/**
-        dest: karpathy-guidelines/
+        dest: skills/karpathy-guidelines/
 
   - name: anthropics-skills
     git_url: https://github.com/anthropics/skills.git
     commit_sha: 34040c9c568585f6929bedeaad110ad08f079624
     file_includes:
       - src: skills/frontend-design/**
-        dest: frontend-design/
+        dest: skills/frontend-design/
 
   - name: remotion-skills
     git_url: https://github.com/remotion-dev/skills.git
     commit_sha: bbb139d5ba3709b1ffeb27184e9579c681230a08
     file_includes:
       - src: skills/remotion-best-practices/**
-        dest: remotion-best-practices/
+        dest: skills/remotion-best-practices/
 
   - name: softaworks-agent-toolkit
     git_url: https://github.com/softaworks/agent-toolkit.git
     commit_sha: 3027f20f3181758385a1bb8c022d4041dfb4de84
     file_includes:
       - src: skills/mermaid-diagrams/**
-        dest: mermaid-diagrams/
+        dest: skills/mermaid-diagrams/
       - src: LICENSE
-        dest: mermaid-diagrams/LICENSE
+        dest: skills/mermaid-diagrams/LICENSE
 
   - name: jeffallan-claude-skills
     git_url: https://github.com/jeffallan/claude-skills.git
     commit_sha: 882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf
     file_includes:
       - src: skills/kubernetes-specialist/**
-        dest: kubernetes-specialist/
+        dest: skills/kubernetes-specialist/
       - src: LICENSE
-        dest: kubernetes-specialist/LICENSE
+        dest: skills/kubernetes-specialist/LICENSE
 
   - name: hyperskills
     git_url: https://github.com/hyperb1iss/hyperskills.git
     commit_sha: 5c2f96185a7ea1f9a3e9e397b1687f674c4c8c36
     file_includes:
       - src: skills/tui-design/**
-        dest: tui-design/
+        dest: skills/tui-design/
       - src: LICENSE
-        dest: tui-design/LICENSE
+        dest: skills/tui-design/LICENSE
 
   - name: shadcn-vue
     git_url: https://github.com/unovue/shadcn-vue.git
     commit_sha: 0f810bec6c2510ef064d9657dc7039927df1a240
     file_includes:
       - src: skills/shadcn-vue/**
-        dest: shadcn-vue/
+        dest: skills/shadcn-vue/
       - src: LICENSE
-        dest: shadcn-vue/LICENSE
+        dest: skills/shadcn-vue/LICENSE
 
   - name: cloudflare-security-audit
     git_url: https://github.com/cloudflare/security-audit-skill.git
     commit_sha: c1c8a8c1471069fb0e188eeaff69b8e8db6564a8
     file_includes:
       - src: skills/security-audit/**
-        dest: security-audit/
+        dest: skills/security-audit/
       - src: LICENSE
-        dest: security-audit/LICENSE
+        dest: skills/security-audit/LICENSE

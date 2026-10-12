@@ -8,6 +8,45 @@
 
 ---
 
+## Plugin Layout
+
+This repository is a single [Agent Plugin](https://agent-plugins.org/specification)
+(spec v1.0.0), and also a [Cursor Plugin](https://cursor.com/docs/reference/plugins). The
+repository root is the plugin root for both.
+
+```text
+.
+├── plugin.json            # Agent Plugins manifest (portable: skills + MCP servers)
+├── .cursor-plugin/
+│   ├── plugin.json        # Cursor Plugin manifest (adds agents, rules, commands, hooks)
+│   └── marketplace.json   # makes the repo a Cursor marketplace containing just this plugin
+├── skills/                # every skill lives in skills/<skill-name>/SKILL.md
+├── agents/                # Cursor custom agents (*.md)
+└── mcp.json               # (optional) MCP servers, same spec version as plugin.json
+```
+
+- Skills are discovered only as immediate children of `skills/` (no nesting, and no
+  skills outside of `skills/`). The skill directory name must match its `name`.
+- `plugin.json` has a closed schema. Only `$schema`, `name`, `version`, `description`,
+  `author`, `homepage`, `repository`, `license`, `keywords`, and `extensions` are allowed
+  top-level fields. Client-specific manifest data goes under `extensions`.
+- Keep `name`, `description`, and metadata in `.cursor-plugin/plugin.json` and the plugin
+  entry in `.cursor-plugin/marketplace.json` in sync with `plugin.json`.
+- The portable spec only defines skills and MCP servers. Other component types are
+  client-specific. For Cursor, use `agents/`, `rules/`, `commands/`, and `hooks/` at the
+  root (discovered automatically). Files for other clients belong in a top-level directory
+  named for that client's reverse-domain namespace (e.g. `com.example.client/`).
+- All files must resolve within the repository root. Do not add symlinks that point outside
+  of it.
+- Dev-only content (`.github/`, `.cursor/`, `test-prompts/`, `tmp/`) is not part of the
+  plugin's components, and must never be referenced by skills or agents.
+- `./.github/scripts/install-symlinks.sh` (`task`) symlinks the repo root into
+  `~/.agents/plugins/<plugin name>`, and, when the Cursor `agent` CLI is present, runs
+  `agent plugin marketplace add` (or `update`) for this repo. Cursor does not read
+  `~/.agents/plugins`, and indexes from the git remote, so changes must be pushed first.
+
+---
+
 ## Skill Authorship Standards
 
 Skills follow the [Agent Skills specification](https://agentskills.io/specification).
@@ -178,8 +217,9 @@ and how they are customized.
 
 **Before modifying any skill, check `remotes.yaml` first.**
 
-- If the skill directory appears under a remote's `file_includes` `dest` entry, it is pulled
-  from upstream. Direct edits to files in that directory will be overwritten on the next sync.
+- If the skill directory (`skills/<name>/`) appears under a remote's `file_includes` `dest`
+  entry, it is pulled from upstream. Direct edits to files in that directory will be
+  overwritten on the next sync.
 - If the remote entry lists `patches`, local customizations belong in `.github/patches/`.
   Add or edit patch files there, register them under `patches` in `remotes.yaml`, then
   re-sync with `task sync` (or `./.github/scripts/update-remotes.py --filter <remote-name>`).
@@ -189,7 +229,8 @@ and how they are customized.
 ### When Creating New Skills
 
 1. Check existing skills for overlap
-2. Write SKILL.md with capability + trigger description (no process steps)
+2. Create `skills/<skill-name>/SKILL.md` with capability + trigger description (no
+   process steps)
 3. Create reference files for deep content (100+ lines)
 4. Add routing table linking topics to references
 5. Test skill triggers with realistic prompts

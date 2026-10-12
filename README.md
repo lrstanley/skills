@@ -41,52 +41,93 @@
 </p>
 <!-- template:end:header -->
 
-This repository contains skills I've tailored to my personal usecases/workflows,
-and/or that I simply use frequently. [view on skills.sh](https://skills.sh/lrstanley/skills).
-See the [remotes.yaml](remotes.yaml) file for where some of these skills are sourced from.
+This repository is a single [Agent Plugin](https://agent-plugins.org/) (the repository root is
+the plugin root, see [plugin.json](plugin.json)), bundling skills I've tailored to my personal
+usecases/workflows, and/or that I simply use frequently. See the [remotes.yaml](remotes.yaml) file
+for where some of these skills are sourced from.
+
+## :package: Installation
+
+### Cursor
+
+This repository is also a Cursor marketplace containing a single plugin, so it can be added by
+URL and then installed from Customize (user or project scope):
+
+```bash
+agent plugin marketplace add https://github.com/lrstanley/skills
+
+# after pushing changes, re-index the marketplace to pick them up
+agent plugin marketplace update lrstanley
+```
+
+### Other clients
+
+Check [the compatible clients list](https://agent-plugins.org/compatible-clients) for how your
+client installs or loads Agent Plugins from a git repository or a local directory.
+
+### Local development
+
+From a local clone (requires `jq`; override the plugins location with `AGENT_PLUGINS_HOME`):
+
+```bash
+git clone https://github.com/lrstanley/skills.git ~/go/src/github.com/lrstanley/skills
+cd ~/go/src/github.com/lrstanley/skills
+
+task # or: ./.github/scripts/install-symlinks.sh
+```
+
+This symlinks the repo into `~/.agents/plugins/lrstanley-skills`. If the Cursor `agent` CLI is
+installed, it also adds the Cursor marketplace above (or re-indexes it if already added). Cursor
+indexes from the git remote, so push changes first, and install the plugin itself from Customize.
+Cursor does not read `~/.agents/plugins`, and ignores symlinks in `~/.cursor/plugins/local` that
+point outside of that directory.
+
+### Individual skills
+
+If your client does not support Agent Plugins yet, skills can still be installed individually
+from the [`skills/`](skills) directory with [skills.sh](https://skills.sh/lrstanley/skills):
 
 ```bash
 npx skills add lrstanley/skills -g
 
 # specific skill, with auto-accept (default agent checks)
 npx skills add lrstanley/skills -s golang -g -y
-npx skills add lrstanley/skills -s golang-tui -g -y
-npx skills add lrstanley/skills -s grill-me -g -y
-npx skills add lrstanley/skills -s nuclear-review -g -y
-npx skills add lrstanley/skills -s pr-review-canvas -g -y
-npx skills add lrstanley/skills -s karpathy-guidelines -g -y
-npx skills add lrstanley/skills -s frontend-design -g -y
-npx skills add lrstanley/skills -s shadcn-vue -g -y
-npx skills add lrstanley/skills -s remotion-best-practices -g -y
-npx skills add lrstanley/skills -s mermaid-diagrams -g -y
-npx skills add lrstanley/skills -s kubernetes-specialist -g -y
-npx skills add lrstanley/skills -s tui-design -g -y
-npx skills add lrstanley/skills -s documentation-writer -g -y
-npx skills add lrstanley/skills -s verify-this -g -y
+```
+
+## :wrench: Layout
+
+```text
+.
+├── plugin.json          # plugin manifest (Agent Plugins spec v1.0.0)
+├── .cursor-plugin/      # Cursor plugin + marketplace manifests (enables agents, rules, etc)
+├── skills/              # one directory per skill, each containing a SKILL.md
+├── agents/              # Cursor custom agents
+├── remotes.yaml         # skills synced from upstream repositories (see `task sync`)
+└── .github/             # sync/install scripts, patches, and repository tooling
 ```
 
 ## :brain: Skills
 
 | Skill | Summary |
 | --- | --- |
-| [golang](golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
-| [golang-packages](golang-packages/SKILL.md) | Query pkg.go.dev for package and module metadata via pkgsite-cli or the v1beta REST API -- search, versions, symbols, vulnerabilities, and licenses. |
-| [golang-tui](golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
-| [grill-me](grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
-| [handoff](handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to continue the work from a clean context. |
-| [documentation-writer](documentation-writer/SKILL.md) | Diataxis-guided technical documentation -- tutorials, how-to guides, reference, and explanations with audience-first structure. |
-| [nuclear-review](nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
-| [pr-review-canvas](pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
-| [karpathy-guidelines](karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
-| [frontend-design](frontend-design/SKILL.md) | Distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. |
-| [shadcn-vue](shadcn-vue/SKILL.md) | Manage shadcn-vue components and projects -- adding, searching, fixing, debugging, styling, and composing UI. |
-| [remotion-best-practices](remotion-best-practices/SKILL.md) | Best practices for Remotion video creation in React. |
-| [mermaid-diagrams](mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
-| [kubernetes-specialist](kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
-| [tui-design](tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
-| [unslop](unslop/SKILL.md) | Cut AI tells from writing by detecting and rewriting common AI-generated patterns. |
-| [security-audit](security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
-| [simplify](simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
+| [golang](skills/golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
+| [golang-packages](skills/golang-packages/SKILL.md) | Query pkg.go.dev for package and module metadata via pkgsite-cli or the v1beta REST API -- search, versions, symbols, vulnerabilities, and licenses. |
+| [golang-tui](skills/golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
+| [grill-me](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
+| [handoff](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to continue the work from a clean context. |
+| [documentation-writer](skills/documentation-writer/SKILL.md) | Diataxis-guided technical documentation -- tutorials, how-to guides, reference, and explanations with audience-first structure. |
+| [nuclear-review](skills/nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
+| [pr-review-canvas](skills/pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
+| [karpathy-guidelines](skills/karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
+| [frontend-design](skills/frontend-design/SKILL.md) | Distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. |
+| [shadcn-vue](skills/shadcn-vue/SKILL.md) | Manage shadcn-vue components and projects -- adding, searching, fixing, debugging, styling, and composing UI. |
+| [remotion-best-practices](skills/remotion-best-practices/SKILL.md) | Best practices for Remotion video creation in React. |
+| [mermaid-diagrams](skills/mermaid-diagrams/SKILL.md) | Create software diagrams with Mermaid -- sequence, flowcharts, ERD, C4, and more. |
+| [kubernetes-specialist](skills/kubernetes-specialist/SKILL.md) | Deploy and manage Kubernetes workloads -- manifests, Helm, RBAC, debugging, and GitOps. |
+| [tui-design](skills/tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
+| [unslop](skills/unslop/SKILL.md) | Cut AI tells from writing by detecting and rewriting common AI-generated patterns. |
+| [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
+| [simplify](skills/simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->

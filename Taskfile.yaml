@@ -3,15 +3,15 @@ version: "3"
 
 tasks:
   default:
-    desc: Symlink local skills into ~/.agents/skills (runs install:symlink)
+    desc: Install this plugin locally (runs install:symlink)
     cmds:
       - task: install:symlink
   install:symlink:
-    desc: Symlink each repo skill with SKILL.md into ~/.agents/skills
+    desc: Symlink the plugin into ~/.agents/plugins, and add/update the Cursor marketplace
     cmds:
       - ./.github/scripts/install-symlinks.sh
   sync:
-    desc: Sync remote skills from remotes.yaml into the repo
+    desc: Sync remote skills from remotes.yaml into the repo's skills/ directory
     cmds:
       - ./.github/scripts/update-remotes.py
   up:

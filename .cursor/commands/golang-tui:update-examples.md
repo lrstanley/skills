@@ -5,7 +5,7 @@ description: >-
 
 # /golang-tui:update-examples
 
-**Goal:** Align `golang-tui/references/libraries/examples.md` with the current [Bubble Tea examples README](https://github.com/charmbracelet/bubbletea/blob/main/examples/README.md).
+**Goal:** Align `skills/golang-tui/references/libraries/examples.md` with the current [Bubble Tea examples README](https://github.com/charmbracelet/bubbletea/blob/main/examples/README.md).
 
 **Source of truth:** The README at `main` on GitHub -- not a local clone unless you are validating links.
 
@@ -17,7 +17,7 @@ description: >-
 
 2. **Parse structure:** Treat each `### `-level heading as one documented example. The following paragraph usually contains `` `dirname` `` naming the directory under `examples/`. Build an ordered list of `(heading title, directory name, descriptive sentence from the README)`.
 
-3. **Compare to** `golang-tui/references/libraries/examples.md`:
+3. **Compare to** `skills/golang-tui/references/libraries/examples.md`:
 
    - **New** README section / example → add a matching `###` block in the same order as upstream. Each block must include:
      - **`Tree:`** link: `https://github.com/charmbracelet/bubbletea/tree/main/examples/<dirname>`
