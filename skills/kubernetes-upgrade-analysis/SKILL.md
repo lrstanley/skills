@@ -8,9 +8,9 @@ description: >-
   1.35), upgrading a cluster component (CNI, ingress, operators, controllers, CSI), or
   auditing upgrade readiness.
 license: MIT
+disable-model-invocation: true
 metadata:
   author: https://github.com/lrstanley
-  version: "1.1.0"
   domain: infrastructure
   triggers: kubernetes upgrade, cluster upgrade, k8s upgrade, version skew, API deprecation, removed APIs, pluto, kubent, kubepug, upgrade report, upgrade readiness, Flux, Argo CD, GitOps, compatibility matrix, component upgrade
   role: specialist
