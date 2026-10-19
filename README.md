@@ -48,6 +48,18 @@ for where some of these skills are sourced from.
 
 ## :package: Installation
 
+### Claude Code
+
+This repository is also a Claude Code marketplace containing a single plugin:
+
+```bash
+claude plugin marketplace add lrstanley/skills
+claude plugin install lrstanley-skills@lrstanley
+
+# or, in one step
+/plugin install lrstanley-skills --marketplace lrstanley/skills
+```
+
 ### Cursor
 
 This repository is also a Cursor marketplace containing a single plugin, so it can be added by
@@ -99,6 +111,7 @@ npx skills add lrstanley/skills -s golang -g -y
 ```text
 .
 ├── plugin.json          # plugin manifest (Agent Plugins spec v1.0.0)
+├── .claude-plugin/      # Claude Code marketplace manifest
 ├── .cursor-plugin/      # Cursor plugin + marketplace manifests (enables agents, rules, etc)
 ├── skills/              # one directory per skill, each containing a SKILL.md
 ├── agents/              # Cursor custom agents

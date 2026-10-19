@@ -17,6 +17,8 @@ repository root is the plugin root for both.
 ```text
 .
 ├── plugin.json            # Agent Plugins manifest (portable: skills + MCP servers)
+├── .claude-plugin/
+│   └── marketplace.json   # Claude Code marketplace; the entry (source "./") is the plugin manifest
 ├── .cursor-plugin/
 │   ├── plugin.json        # Cursor Plugin manifest (adds agents, rules, commands, hooks)
 │   └── marketplace.json   # makes the repo a Cursor marketplace containing just this plugin
@@ -30,8 +32,11 @@ repository root is the plugin root for both.
 - `plugin.json` has a closed schema. Only `$schema`, `name`, `version`, `description`,
   `author`, `homepage`, `repository`, `license`, `keywords`, and `extensions` are allowed
   top-level fields. Client-specific manifest data goes under `extensions`.
-- Keep `name`, `description`, and metadata in `.cursor-plugin/plugin.json` and the plugin
-  entry in `.cursor-plugin/marketplace.json` in sync with `plugin.json`.
+- Keep `name`, `description`, and metadata in `.cursor-plugin/plugin.json`, the plugin
+  entry in `.cursor-plugin/marketplace.json`, and the plugin entry in
+  `.claude-plugin/marketplace.json` in sync with `plugin.json`. There is deliberately no
+  `.claude-plugin/plugin.json`, so Claude Code uses the marketplace entry as the manifest.
+  Validate with `claude plugin validate .`.
 - The portable spec only defines skills and MCP servers. Other component types are
   client-specific. For Cursor, use `agents/`, `rules/`, `commands/`, and `hooks/` at the
   root (discovered automatically). Files for other clients belong in a top-level directory

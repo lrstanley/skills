@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "lrstanley",
+  "description": "Personal agent skills and tooling.",
+  "owner": {
+    "name": "Liam Stanley",
+    "email": "liam@liam.sh",
+    "url": "https://github.com/lrstanley"
+  },
+  "plugins": [
+    {
+      "name": "lrstanley-skills",
+      "source": "./",
+      "description": "Personal agent skills tailored to my workflows (Go, TUIs, code review, documentation, and more), plus skills synced from upstream projects.",
+      "author": {
+        "name": "Liam Stanley",
+        "email": "liam@liam.sh",
+        "url": "https://github.com/lrstanley"
+      },
+      "homepage": "https://github.com/lrstanley/skills",
+      "repository": "https://github.com/lrstanley/skills",
+      "license": "MIT",
+      "keywords": ["skills", "golang", "tui", "code-review", "documentation"]
+    }
+  ]
+}
