@@ -115,8 +115,32 @@ npx skills add lrstanley/skills -s golang -g -y
 ├── .cursor-plugin/      # Cursor plugin + marketplace manifests (enables agents, rules, etc)
 ├── skills/              # one directory per skill, each containing a SKILL.md
 ├── agents/              # Cursor custom agents
+├── hooks/               # Cursor and Claude Code Wakapi time-tracking hooks
 ├── remotes.yaml         # skills synced from upstream repositories (see `task sync`)
 └── .github/             # sync/install scripts, patches, and repository tooling
+```
+
+## :stopwatch: Time tracking
+
+The Cursor and Claude Code plugins ship hooks that report AI coding activity to a
+[Wakapi](https://github.com/muety/wakapi) server. Wakapi accepts WakaTime heartbeats.
+The hooks call `wakatime-cli --sync-ai-activity`, which reads Claude, Cursor, and Codex
+transcripts and sends them as `ai coding` heartbeats.
+
+The hooks exit without doing anything unless every item below is true:
+
+- `~/.wakatime.cfg` exists (`$WAKATIME_HOME/.wakatime.cfg` when `WAKATIME_HOME` is set)
+- `[settings]` `api_url` points at Wakapi. A host on `wakatime.com` stays with the official WakaTime plugins
+- an API key is available through `api_key`, `api_key_vault_cmd`, or `WAKATIME_API_KEY`
+- `wakatime-cli` is on `PATH` or at `~/.wakatime/wakatime-cli`
+
+`sync_ai_disabled = true` skips the sync. The hooks do not install the CLI or create a
+config. Syncs run in the background, at most once a minute.
+
+```ini
+[settings]
+api_url = https://wakapi.example.com/api
+api_key = your-key
 ```
 
 ## :brain: Skills

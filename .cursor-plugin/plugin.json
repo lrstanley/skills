@@ -8,5 +8,6 @@
   "homepage": "https://github.com/lrstanley/skills",
   "repository": "https://github.com/lrstanley/skills",
   "license": "MIT",
-  "keywords": ["skills", "golang", "tui", "code-review", "documentation"]
+  "keywords": ["skills", "golang", "tui", "code-review", "documentation"],
+  "hooks": "hooks/cursor.json"
 }

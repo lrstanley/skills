@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "\"${CURSOR_PLUGIN_ROOT}/hooks/wakapi.sh\" cursor",
+        "timeout": 15
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "\"${CURSOR_PLUGIN_ROOT}/hooks/wakapi.sh\" cursor",
+        "timeout": 15
+      }
+    ],
+    "afterAgentResponse": [
+      {
+        "command": "\"${CURSOR_PLUGIN_ROOT}/hooks/wakapi.sh\" cursor",
+        "timeout": 15
+      }
+    ],
+    "stop": [
+      {
+        "command": "\"${CURSOR_PLUGIN_ROOT}/hooks/wakapi.sh\" cursor",
+        "timeout": 15
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "\"${CURSOR_PLUGIN_ROOT}/hooks/wakapi.sh\" cursor",
+        "timeout": 15
+      }
+    ],
+    "preCompact": [
+      {
+        "command": "\"${CURSOR_PLUGIN_ROOT}/hooks/wakapi.sh\" cursor",
+        "timeout": 15
+      }
+    ]
+  }
+}

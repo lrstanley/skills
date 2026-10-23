@@ -24,6 +24,10 @@ repository root is the plugin root for both.
 │   └── marketplace.json   # makes the repo a Cursor marketplace containing just this plugin
 ├── skills/                # every skill lives in skills/<skill-name>/SKILL.md
 ├── agents/                # Cursor custom agents (*.md)
+├── hooks/
+│   ├── hooks.json         # Claude Code hooks (auto-discovered; Claude format)
+│   ├── cursor.json        # Cursor hooks (selected by .cursor-plugin/plugin.json)
+│   └── wakapi.sh          # shared Wakapi sync; no-ops unless a Wakapi config exists
 └── mcp.json               # (optional) MCP servers, same spec version as plugin.json
 ```
 
@@ -41,6 +45,14 @@ repository root is the plugin root for both.
   client-specific. For Cursor, use `agents/`, `rules/`, `commands/`, and `hooks/` at the
   root (discovered automatically). Files for other clients belong in a top-level directory
   named for that client's reverse-domain namespace (e.g. `com.example.client/`).
+- Cursor and Claude Code both default to `hooks/hooks.json`, and the formats differ.
+  Claude Code auto-discovers `hooks/hooks.json`. `.cursor-plugin/plugin.json` sets
+  `hooks` to `hooks/cursor.json`, which replaces Cursor's folder discovery so Cursor
+  does not parse the Claude file. Both commands run `hooks/wakapi.sh`. Leave that
+  split in place. The script exits immediately unless `$WAKATIME_HOME/.wakatime.cfg`
+  (`~/.wakatime.cfg` by default) has an `api_url` whose host is outside `wakatime.com`,
+  an API key, and `wakatime-cli` is installed. It does not install the CLI or write a
+  config.
 - All files must resolve within the repository root. Do not add symlinks that point outside
   of it.
 - Dev-only content (`.github/`, `.cursor/`, `test-prompts/`, `tmp/`) is not part of the
