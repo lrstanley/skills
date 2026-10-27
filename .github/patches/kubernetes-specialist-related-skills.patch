@@ -1,0 +1,12 @@
+diff --git a/skills/kubernetes-specialist/SKILL.md b/skills/kubernetes-specialist/SKILL.md
+index 21ffb27..4cbdd92 100644
+--- a/skills/kubernetes-specialist/SKILL.md
++++ b/skills/kubernetes-specialist/SKILL.md
+@@ -11,7 +11,6 @@ metadata:
+   role: specialist
+   scope: infrastructure
+   output-format: manifests
+-  related-skills: devops-engineer, cloud-architect, sre-engineer, terraform-engineer, security-reviewer, chaos-engineer
+ ---
+ 
+ # Kubernetes Specialist

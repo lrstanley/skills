@@ -50,7 +50,7 @@ remotes:
 
   - name: remotion-skills
     git_url: https://github.com/remotion-dev/skills.git
-    commit_sha: 32b241b97f4e0e4ab61fe9a41b05e6e64503f8c5
+    commit_sha: 30d4553ecd46fbc5212fd0ff006ae43af522158b
     file_includes:
       - src: skills/remotion-best-practices/**
         dest: skills/remotion-best-practices/
@@ -66,7 +66,9 @@ remotes:
 
   - name: jeffallan-claude-skills
     git_url: https://github.com/jeffallan/claude-skills.git
-    commit_sha: 1be15d8064f88fc25216442406d40add8fd23b53
+    commit_sha: 190e05a380b624187f5770451e1f41b9187cb63c
+    patches:
+      - .github/patches/kubernetes-specialist-related-skills.patch
     file_includes:
       - src: skills/kubernetes-specialist/**
         dest: skills/kubernetes-specialist/
@@ -75,7 +77,7 @@ remotes:
 
   - name: hyperskills
     git_url: https://github.com/hyperb1iss/hyperskills.git
-    commit_sha: 5c2f96185a7ea1f9a3e9e397b1687f674c4c8c36
+    commit_sha: a0e30e791c5a9ef65f438a24b6ea7bffb912ac70
     file_includes:
       - src: skills/tui-design/**
         dest: skills/tui-design/
@@ -84,7 +86,7 @@ remotes:
 
   - name: shadcn-vue
     git_url: https://github.com/unovue/shadcn-vue.git
-    commit_sha: b251d9fd92aa496495e127137a7734704fb34a29
+    commit_sha: de1f76cbb4b319ea26b0dea175dc00c18fce3bd0
     file_includes:
       - src: skills/shadcn-vue/**
         dest: skills/shadcn-vue/
