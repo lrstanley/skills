@@ -165,6 +165,7 @@ api_key = your-key
 | [sharpen](skills/sharpen/SKILL.md) | Make a task deeper, not bigger, then rewrite the prompt. Invoked explicitly with `/sharpen`. |
 | [writing-for-agents](skills/writing-for-agents/SKILL.md) | Guidance for writing documents agents consume -- skills, `AGENTS.md`/`CLAUDE.md`, and docs reached by pointer. |
 | [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
+| [apply-worktree](skills/apply-worktree/SKILL.md) | Land a git worktree's commits onto the main worktree's default branch, verify they applied, and clean up the worktree and branch. Invoked explicitly with `/apply-worktree`. |
 | [simplify](skills/simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
 
 <!-- template:begin:support -->
