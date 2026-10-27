@@ -151,10 +151,8 @@ api_key = your-key
 | [golang-packages](skills/golang-packages/SKILL.md) | Query pkg.go.dev for package and module metadata via pkgsite-cli or the v1beta REST API -- search, versions, symbols, vulnerabilities, and licenses. |
 | [golang-tui](skills/golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
 | [grill-me](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
-| [handoff](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to continue the work from a clean context. |
 | [documentation-writer](skills/documentation-writer/SKILL.md) | Diataxis-guided technical documentation -- tutorials, how-to guides, reference, and explanations with audience-first structure. |
 | [nuclear-review](skills/nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
-| [pr-review-canvas](skills/pr-review-canvas/SKILL.md) | Interactive HTML PR review walkthrough from a GitHub PR URL -- fetches diffs, categorizes core vs mechanical changes, and renders annotated diffs. |
 | [karpathy-guidelines](skills/karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
 | [frontend-design](skills/frontend-design/SKILL.md) | Distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. |
 | [shadcn-vue](skills/shadcn-vue/SKILL.md) | Manage shadcn-vue components and projects -- adding, searching, fixing, debugging, styling, and composing UI. |
@@ -164,6 +162,8 @@ api_key = your-key
 | [kubernetes-upgrade-analysis](skills/kubernetes-upgrade-analysis/SKILL.md) | Read-only analysis of a cluster and its Flux/Argo CD repos ahead of a cluster or component upgrade -- API deprecations, per-component compatibility, upgrade headroom, and a standardized, skimmable report with a batched upgrade plan. |
 | [tui-design](skills/tui-design/SKILL.md) | Terminal UI design patterns -- layouts, color schemes, keyboard navigation, and dashboards. |
 | [unslop](skills/unslop/SKILL.md) | Cut AI tells from writing by detecting and rewriting common AI-generated patterns. |
+| [sharpen](skills/sharpen/SKILL.md) | Make a task deeper, not bigger, then rewrite the prompt. Invoked explicitly with `/sharpen`. |
+| [writing-for-agents](skills/writing-for-agents/SKILL.md) | Guidance for writing documents agents consume -- skills, `AGENTS.md`/`CLAUDE.md`, and docs reached by pointer. |
 | [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 | [simplify](skills/simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
 

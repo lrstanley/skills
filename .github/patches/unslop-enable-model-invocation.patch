@@ -1,0 +1,12 @@
+diff --git a/pstack/skills/unslop/SKILL.md b/pstack/skills/unslop/SKILL.md
+index 97f5b64..be42292 100644
+--- a/pstack/skills/unslop/SKILL.md
++++ b/pstack/skills/unslop/SKILL.md
+@@ -1,7 +1,6 @@
+ ---
+ name: unslop
+ description: Cut AI tells from any writing.
+-disable-model-invocation: true
+ ---
+ 
+ # Unslop

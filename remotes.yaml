@@ -2,15 +2,11 @@
 remotes:
   - name: cursor-plugins
     git_url: https://github.com/cursor/plugins.git
-    commit_sha: ea32d9562a1c9f077d7cdd3be53d07383eb18866
+    commit_sha: ab69380dd50ee47d426b35cb8369cffdddafc218
     patches:
       - .github/patches/nuclear-review-rename.patch
+      - .github/patches/unslop-enable-model-invocation.patch
     file_includes:
-      # pr-review-canvas
-      - src: cursor-team-kit/skills/pr-review-canvas/**
-        dest: skills/pr-review-canvas/
-      - src: cursor-team-kit/LICENSE
-        dest: skills/pr-review-canvas/LICENSE
       # thermo-nuclear-code-quality-review
       - src: cursor-team-kit/skills/thermo-nuclear-code-quality-review/**
         dest: skills/nuclear-review/
@@ -21,17 +17,22 @@ remotes:
         dest: skills/unslop/
       - src: pstack/LICENSE
         dest: skills/unslop/LICENSE
+      # sharpen
+      - src: pstack/skills/sharpen/**
+        dest: skills/sharpen/
+      - src: pstack/LICENSE
+        dest: skills/sharpen/LICENSE
 
   - name: mattpocock
     git_url: https://github.com/mattpocock/skills.git
-    commit_sha: 49dd158d1076134a641b33efb035946536778336
+    commit_sha: 5beb35b040e3de97e54fa9e386d7e42d15c295c2
     file_includes:
-      - src: skills/productivity/handoff/**
-        dest: skills/handoff/
+      - src: skills/productivity/writing-for-agents/**
+        dest: skills/writing-for-agents/
       - src: LICENSE
-        dest: skills/handoff/LICENSE
+        dest: skills/writing-for-agents/LICENSE
     file_excludes:
-      - src: skills/productivity/handoff/agents/**
+      - src: skills/productivity/writing-for-agents/agents/**
 
   - name: andrej-karpathy-skills
     git_url: https://github.com/forrestchang/andrej-karpathy-skills.git
