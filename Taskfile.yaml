@@ -10,6 +10,10 @@ tasks:
     desc: Symlink the plugin into ~/.agents/plugins, and add/update the Cursor marketplace
     cmds:
       - ./.github/scripts/install-symlinks.sh
+  refresh:
+    desc: Refresh the installed plugin in Claude Code and Cursor from the git remote (push first)
+    cmds:
+      - ./.github/scripts/refresh-clients.sh
   sync:
     desc: Sync remote skills from remotes.yaml into the repo's skills/ directory
     cmds:

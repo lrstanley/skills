@@ -61,6 +61,11 @@ repository root is the plugin root for both.
   `~/.agents/plugins/<plugin name>`, and, when the Cursor `agent` CLI is present, runs
   `agent plugin marketplace add` (or `update`) for this repo. Cursor does not read
   `~/.agents/plugins`, and indexes from the git remote, so changes must be pushed first.
+- `./.github/scripts/refresh-clients.sh` (`task refresh`) updates the installed plugin in
+  Claude Code and re-indexes the Cursor marketplace, so new skills show up without
+  reinstalling. Push first. Claude Code needs a restart, and Cursor's installed plugin
+  must be updated from its customize page. If the Cursor marketplace was added pinned to a
+  commit, the script reports it and prints the remove + `add --git-ref master` fix.
 
 ---
 
