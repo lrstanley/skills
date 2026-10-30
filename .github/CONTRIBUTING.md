@@ -87,6 +87,15 @@ Below are a few guidelines if you would like to contribute:
 
 
 
+
+
+
+### :snake: Python
+
+- All functions/methods/files should use type annotations when available, in
+  addition to ensuring all functions/methods have proper docstrings.
+- This project uses [black](https://github.com/psf/black) for linting Python libraries
+  and scripts. This is an available option in most editors that use a Python language server.
 ### :penguin: Bash/Posix-shell
 
 - This project uses [shellcheck](https://github.com/koalaman/shellcheck) for linting
