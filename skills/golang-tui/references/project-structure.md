@@ -148,7 +148,7 @@ tasks:
   fmt:
     desc: format code
     cmds:
-      - gofumpt -w .
+      - golangci-lint fmt
 ```
 
 The `debug:basic` task forces reduced color output by setting `TERM` and `COLORTERM`.

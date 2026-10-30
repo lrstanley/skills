@@ -110,7 +110,8 @@ Key properties demonstrated: bounded goroutine lifetime via `ctx`, error propaga
 
 ### MUST DO
 
-- Use gofumpt (when available, otherwise gofmt) and golangci-lint on all code
+- Use golangci-lint on all code. If its config enables the gofumpt formatter, format with `golangci-lint fmt`; otherwise use `gofumpt -w .`, then `gofmt`. New configs should enable gofumpt
+- Don't run `modernize -fix` standalone if golangci-lint enables the `modernize` linter (`golangci-lint run --fix` covers it). `go fix ./...` is a separate step
 - Add context.Context to all blocking operations
 - Handle all errors explicitly (no naked returns)
 - Write table-driven tests with subtests

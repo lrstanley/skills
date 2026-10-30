@@ -351,14 +351,18 @@ tasks:
     desc: run linter
     deps: [prepare]
     cmds:
-      - go run golang.org/x/tools/go/analysis/passes/modernize/cmd/modernize@latest -fix ./...
+      # assumes the golangci-lint config enables the `modernize` linter. Only run
+      # `go run golang.org/x/tools/go/analysis/passes/modernize/cmd/modernize@latest -fix ./...`
+      # separately if it doesn't (or there is no golangci-lint).
       - golangci-lint run --fix
   fmt:
     desc: format code
     deps: [prepare]
     aliases: [format]
     cmds:
-      - gofumpt -w .
+      # use `golangci-lint fmt` if the golangci-lint config has a formatter configured
+      # (e.g. gofumpt), otherwise `gofumpt -w .`.
+      - golangci-lint fmt
   # generally only needed for applications which may spin up their own pprof server. e.g.:
   #   import _ "net/http/pprof" //nolint:gosec
   #
