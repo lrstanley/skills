@@ -9,7 +9,7 @@
   },
   "plugins": [
     {
-      "name": "lrstanley-skills",
+      "name": "lrstanley",
       "source": "./",
       "description": "Personal agent skills tailored to my workflows (Go, TUIs, code review, documentation, and more), plus skills synced from upstream projects.",
       "keywords": ["skills", "golang", "tui", "code-review", "documentation"]

@@ -54,10 +54,10 @@ This repository is also a Claude Code marketplace containing a single plugin:
 
 ```bash
 claude plugin marketplace add lrstanley/skills
-claude plugin install lrstanley-skills@lrstanley
+claude plugin install lrstanley@lrstanley
 
 # or, in one step
-/plugin install lrstanley-skills --marketplace lrstanley/skills
+/plugin install lrstanley --marketplace lrstanley/skills
 ```
 
 ### Cursor
@@ -88,7 +88,7 @@ cd ~/go/src/github.com/lrstanley/skills
 task # or: ./.github/scripts/install-symlinks.sh
 ```
 
-This symlinks the repo into `~/.agents/plugins/lrstanley-skills`. If the Cursor `agent` CLI is
+This symlinks the repo into `~/.agents/plugins/lrstanley`. If the Cursor `agent` CLI is
 installed, it also adds the Cursor marketplace above (or re-indexes it if already added). Cursor
 indexes from the git remote, so push changes first, and install the plugin itself from Customize.
 Cursor does not read `~/.agents/plugins`, and ignores symlinks in `~/.cursor/plugins/local` that
@@ -167,6 +167,10 @@ api_key = your-key
 | [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 | [apply-worktree](skills/apply-worktree/SKILL.md) | Land a git worktree's commits onto the main worktree's default branch, verify they applied, and clean up the worktree and branch. Invoked explicitly with `/apply-worktree`. |
 | [simplify](skills/simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
+| [file-pr](skills/file-pr/SKILL.md) | File a concise pull request that leads with the problem, not an inventory of changes. Invoked explicitly with `/file-pr`. |
+| [babysit-pr](skills/babysit-pr/SKILL.md) | Watch a PR through CI and review bots, fix the real findings, and keep it rebased until it is ready. Invoked explicitly with `/babysit-pr`. |
+| [modernize](skills/modernize/SKILL.md) | Rebase a stale PR onto the latest base branch and decide whether it should still exist. Invoked explicitly with `/modernize`. |
+| [leaving-gh-comments](skills/leaving-gh-comments/SKILL.md) | Format comments an agent posts on GitHub on the user's behalf, with attribution and a secrets check. |
 
 <!-- template:begin:support -->
 <!-- do not edit anything in this "template" block, its auto-generated -->

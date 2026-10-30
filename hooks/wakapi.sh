@@ -12,7 +12,7 @@
 # syncs are detached and limited to one run per minute so hook storms stay cheap.
 set -euo pipefail
 
-plugin_name="lrstanley-skills"
+plugin_name="lrstanley"
 
 lower() {
     printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
