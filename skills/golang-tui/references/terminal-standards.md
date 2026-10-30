@@ -147,6 +147,16 @@ Some terminals show progress in the window or tab using OSC `9;4` sequences.
 `SetWarningProgressBar`, `SetIndeterminateProgressBar`, and `ResetProgressBar`.
 Bubble Tea also provides `view.ProgressBar` for in-TUI progress bars.
 
+### OSC 7501 program status (Bubble Tea v2.1+)
+
+The Program Status Protocol lets a TUI tell the terminal whether it is idle, working, blocked
+on the user, done, or failed (e.g. a tab indicator for long-running or agent-style apps).
+Set `view.ProgramStatus = &tea.ProgramStatus{...}` using `tea.ProgramState*` (`Idle`, `Working`,
+`Done`, `Blocked`, `Error`, `Clear`) and, for `Blocked`, a `tea.ProgramStatusKind*`
+(`Permission`, `Question`, `Auth`). Unsupported terminals ignore it, so detection is optional:
+`tea.RequestProgramStatusSupport` replies with `tea.ProgramStatusSupportMsg` only on supporting
+terminals (needs input enabled; pick your own timeout). Example: `examples/program-status` in bubbletea.
+
 ### In-app progress bar (Bubbles)
 
 For a bar drawn inside your Bubble Tea layout, use `charm.land/bubbles/v2/progress`
@@ -193,4 +203,5 @@ your fallback color paths.
 | Bracketed paste | Terminal mode 2004 | `tea.PasteMsg`, optional `DisableBracketedPasteMode`; `ansi.SetModeBracketedPaste` |
 | Keyboard enhancements | Kitty protocol, terminal | `view.KeyboardEnhancements`, `tea.KeyboardEnhancementsMsg`, `KeyReleaseMsg`; `ansi.KittyKeyboard` |
 | OSC progress | Terminal (OSC 9;4) | `ansi.SetProgressBar` and `view.ProgressBar` |
+| Program status | Terminal (OSC 7501) | `view.ProgramStatus`, `tea.RequestProgramStatusSupport` |
 | Images, sixel, Kitty, iTerm2, mosaic | Terminal protocol | `references/images.md` |

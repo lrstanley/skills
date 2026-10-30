@@ -73,6 +73,57 @@ registry.PreviousTint()         // cycle backward
 
 Register more tints after construction with `Register`, and call `SetTint` to pick the active one.
 
+## Filter by Hue and Tone
+
+Built-in tints have a hue (computed from the ANSI palette) and an optional tone (muted, retro,
+and so on). An empty tone means uncategorized.
+
+```go
+blues := tint.NewRegistry(nil, tint.TintsByHue(tint.HueBlue)...)
+for _, t := range blues.TintsByTone(tint.ToneMuted) {
+	fmt.Println(t.DisplayName)
+}
+```
+
+`Registry` also has `TintsByHue`, `TintsByTone`, and `TintsByHueAndTone`. Colors
+have `Darken(percent)` and `Lighten(percent)` helpers (and package-level `tint.Darken`/`tint.Lighten`
+for any `color.Color`).
+
+## React to Changes
+
+`Subscribe` is called when a tint is added, replaced, or removed, or when the current tint
+changes. Listen for `CurrentChanged` to rebuild styles; forward it to your program with `p.Send`.
+
+```go
+cancel := tint.Subscribe(func(ev tint.Event) {
+	if ev.Kind == tint.CurrentChanged {
+		p.Send(rebuildStylesMsg{})
+	}
+})
+defer cancel()
+```
+
+The callback runs synchronously on the goroutine that made the change, so keep it fast. Subscriptions
+belong to a registry: if you replace `tint.DefaultRegistry`, subscribe again.
+
+## Follow the Terminal's Theme
+
+A `tint.Source` supplies tints from outside bubbletint, added with `tint.Attach`. Sources are opt-in
+and live in their own module (`github.com/lrstanley/bubbletint/sources/v2/...`: `kitty`, `ghostty`,
+`alacritty`, `foot`, `windowsterminal`, `xresources`, `itermcolors`, or `terminal` to auto-pick).
+
+```go
+src, err := terminal.Detect() // github.com/lrstanley/bubbletint/sources/v2/terminal
+if err == nil {
+	detach, err := tint.Attach(ctx, src)
+	// [...]
+}
+```
+
+Source tint IDs are prefixed with the source name (e.g. `kitty:current`). By default the registry
+follows the source and updates when the user changes their theme; use `tint.WithFollow(false)` to only
+register tints. Check `errors.Is(err, tint.ErrNotFound)` for unsupported terminals.
+
 ## Chromatint Integration
 
 Export a chroma syntax highlighting style from the active tint:
@@ -93,3 +144,19 @@ func (tc *ThemeConfig) set() {
 ```
 
 See `references/libraries/chroma-v2.md` for usage details.
+
+## Glamour Integration
+
+Build a Glamour stylesheet from the current tint (code blocks use the same palette roles as chromatint):
+
+```go
+import (
+	"charm.land/glamour/v2"
+	"github.com/lrstanley/bubbletint/glamourtint/v2"
+)
+
+renderer, err := glamour.NewTermRenderer(
+	glamour.WithStyles(glamourtint.StyleConfig(tint.Current())),
+	glamour.WithWordWrap(80),
+)
+```

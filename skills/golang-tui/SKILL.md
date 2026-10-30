@@ -41,7 +41,7 @@ Load detailed guidance based on context:
 | Bubble Tea v2 | `references/libraries/bubbletea-v2.md` | Always load when implementing or debugging `tea.Program`, `tea.Model`, `Init` / `Update` / `View`, `tea.Cmd` / `tea.Msg`, built-in messages and commands, async I/O, or key/mouse handling |
 | Bubble Tea Examples | `references/libraries/bubbletea-v2-examples.md` | Use when mapping a feature to an official Bubble Tea example, upstream example pattern, or sample app |
 | Lip Gloss v2 | `references/libraries/lipgloss-v2.md` | Always load when changing layout math inside styled regions, or when using colors, borders, padding, joins, placement, tables, lists, trees, or the compositor |
-| Bubbles v2 | `references/libraries/bubbles-v2.md` | Always load when integrating or troubleshooting Bubbles components such as spinner, textinput, textarea, list, table, viewport, progress, help, paginator, or filepicker |
+| Bubbles v2 | `references/libraries/bubbles-v2.md` | Always load when integrating or troubleshooting Bubbles components such as spinner, textinput, textarea, list, table, tree, viewport, progress, help, paginator, or filepicker |
 | Testing | `references/libraries/steep.md` | Always load when writing or fixing Bubble Tea integration tests, component tests, snapshot tests, golden files, `steep`, `teatest`, `go-snaps`, or `go-snap` workflows |
 | Chroma | `references/libraries/chroma-v2.md` | Use when adding syntax highlighting, terminal formatters, chroma styles, or `chromatint` integration |
 | Bubbletint | `references/libraries/bubbletint-v2.md` | Load before building theme registries, tint switching, dynamic theme updates, or theme-aware Chroma output via `chromatint` |
@@ -159,11 +159,11 @@ func main() {
 Bubble Tea v2, Lip Gloss v2, Bubbles v2, Elm Architecture, tea.Model, tea.Cmd,
 tea.Msg, tea.View, tea.Program, tea.NewView, tea.KeyPressMsg, tea.WindowSizeMsg,
 tea.ColorProfileMsg, tea.BackgroundColorMsg, bubbletint, tint registry, chroma,
-chromatint, go-nf, Nerd Fonts, beeep, x/ansi, x/editor, steep, x/charm/steep,
+chromatint, go-nf, Nerd Fonts, beeep, x/ansi, x/editor, steep, reel, x/term/steep,
 x/exp/teatest, x/exp/golden, go-snaps, go-snap, lipgloss.JoinHorizontal, lipgloss.JoinVertical,
 lipgloss.Place, lipgloss.Darken, lipgloss.Lighten, lipgloss.LightDark,
 weight-based layout, compositor, spinner, textinput, textarea, list, table,
-viewport, paginator, progress, help, filepicker, key.Binding, key.Matches,
+tree, viewport, paginator, progress, help, filepicker, key.Binding, key.Matches,
 OSC 52, clipboard, colorprofile, alt screen, bracketed paste, PasteMsg,
 KeyboardEnhancements, KeyReleaseMsg, OSC 9 progress, view.ProgressBar,
 snapshot testing, golden files.

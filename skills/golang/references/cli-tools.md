@@ -283,6 +283,31 @@ handler := cli.NewHTTPContext(mux)
 http.ListenAndServe(":8080", handler)
 ```
 
+## Clean Exit with Execute
+
+`cli.Execute(fn)` wraps the body of `main()` so the app exits cleanly. It must be the last call in `main()`, as it never returns.
+
+```go
+func main() {
+	cli.Execute(run)
+}
+
+func run(ctx context.Context, cli *clix.CLI[Flags], logger *slog.Logger) error {
+	db, err := openDB(ctx)
+	if err != nil {
+		return err
+	}
+	defer db.Close() // Runs even if run() returns an error or panics.
+	// [...]
+	return nil
+}
+```
+
+- `ctx` is canceled on SIGINT/SIGTERM (a second signal force-terminates), and contains the CLI (`clix.FromContext`).
+- Returning `nil`, or `context.Canceled` after a signal, exits 0. Other errors are logged and exit 1, or the code from a `kong.ExitCoder` error.
+- Panics are logged with a stack trace and exit 2 (only panics from `fn`'s goroutine).
+- Prefer it over `cli.Context.FatalIfErrorf(err)`, which writes to stderr, skips deferred calls, and doesn't handle panics.
+
 ## Quick Reference
 
 | Feature | How |
@@ -297,5 +322,6 @@ http.ListenAndServe(":8080", handler)
 | Generate markdown | `./app generate-markdown` |
 | Set app metadata | `clix.WithAppInfo[T](clix.AppInfo{...})` |
 | Load .env files | enabled by default, or `clix.WithEnvFiles[T]("path")` |
+| Clean exit / signals | `cli.Execute(run)` |
 | Custom kong options | `clix.WithKongOptions[T](...)` |
 | Kong struct tag docs | [github.com/alecthomas/kong#supported-tags](https://github.com/alecthomas/kong#supported-tags) |

@@ -10,3 +10,4 @@ vendor/*
 bin
 **/.env
 TODO.md
+.upstream-sync.json

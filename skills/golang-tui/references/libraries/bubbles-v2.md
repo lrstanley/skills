@@ -102,6 +102,10 @@ ta.ShowLineNumbers = true
 Key methods: `Focus() tea.Cmd`, `Blur()`, `Value() string`, `SetValue(string)`,
 `Line() int`, `LineCount() int`.
 
+Text selection is supported (v2.2.0+): `Styles.*.Selection` styles selected text,
+`CopySelection() tea.Cmd` copies it (`ctrl+shift+c` by default via `KeyMap.CopySelection`),
+and `DeleteSelection()` removes it. `ctrl+left/right/backspace` work word-wise.
+
 ### list
 
 Full list browser with fuzzy filtering, pagination, help, and status messages.
@@ -147,6 +151,25 @@ Key methods: `Focus()`, `Blur()`, `SelectedRow() Row`, `Cursor() int`,
 `SetRows([]Row)`, `SetWidth(int)`, `SetHeight(int)`, `UpdateViewport()`.
 
 Styles: `table.Styles{Header, Cell, Selected}`.
+
+### tree
+
+Collapsible tree view (v2.2.0+), built from a `tree.Node` hierarchy.
+
+```go
+import "charm.land/bubbles/v2/tree"
+
+root := tree.Root("src").Child(
+	tree.Root("cmd").Child("main.go"),
+	"README.md",
+)
+m := tree.New(root, 40, 20)
+```
+
+Key methods: `Update(tea.Msg) (Model, tea.Cmd)`, `Up()`, `Down()`, `ToggleCurrentNode()`,
+`OpenCurrentNode()`, `CloseCurrentNode()`, `NodeAtCurrentOffset() *tree.Node`, `SetNodes(*Node)`,
+`SetStyles(tree.Styles)`, `SetShowHelp(bool)`, `SetSize(w, h)`. Customize rendering with
+`Enumerator`/`Indenter` and `SetOpenCharacter`/`SetClosedCharacter`/`SetCursorCharacter`.
 
 ### viewport
 
