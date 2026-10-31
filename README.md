@@ -60,6 +60,23 @@ claude plugin install lrstanley@lrstanley
 /plugin install lrstanley --marketplace lrstanley/skills
 ```
 
+### Codex
+
+This repository is also a Codex marketplace (see
+[`.agents/plugins/marketplace.json`](.agents/plugins/marketplace.json)) containing a single
+plugin:
+
+```bash
+codex plugin marketplace add lrstanley/skills --ref master
+codex plugin add lrstanley@lrstanley
+
+# after pushing changes, refresh the marketplace and reinstall to pick them up
+codex plugin marketplace upgrade lrstanley
+codex plugin add lrstanley@lrstanley
+```
+
+Skills load in new Codex sessions.
+
 ### Cursor
 
 This repository is also a Cursor marketplace containing a single plugin, so it can be added by
@@ -88,8 +105,11 @@ cd ~/go/src/github.com/lrstanley/skills
 task # or: ./.github/scripts/install-symlinks.sh
 ```
 
-This symlinks the repo into `~/.agents/plugins/lrstanley`. If the Cursor `agent` CLI is
-installed, it also adds the Cursor marketplace above (or re-indexes it if already added). Cursor
+This symlinks the repo into `~/.agents/plugins/lrstanley`. If the `codex` CLI is installed,
+it adds the Codex marketplace above (or upgrades it if already added) and installs the plugin.
+If the Cursor `agent` CLI is installed, it also adds the Cursor marketplace above (or
+re-indexes it if already added). Codex installs from the git remote, so push first.
+`task refresh` updates the installed plugin in Claude Code, Codex, and Cursor. Cursor
 indexes from the git remote, so push changes first, and install the plugin itself from Customize.
 Cursor does not read `~/.agents/plugins`, and ignores symlinks in `~/.cursor/plugins/local` that
 point outside of that directory.
@@ -113,19 +133,22 @@ npx skills add lrstanley/skills -s golang -g -y
 ├── plugin.json          # plugin manifest (Agent Plugins spec v1.0.0)
 ├── .claude-plugin/      # Claude Code marketplace manifest
 ├── .cursor-plugin/      # Cursor plugin + marketplace manifests (enables agents, rules, etc)
+├── .agents/plugins/     # Codex marketplace manifest
 ├── skills/              # one directory per skill, each containing a SKILL.md
 ├── agents/              # Cursor custom agents
-├── hooks/               # Cursor and Claude Code Wakapi time-tracking hooks
+├── hooks/               # Cursor, Claude Code, and Codex Wakapi time-tracking hooks
 ├── remotes.yaml         # skills synced from upstream repositories (see `task sync`)
 └── .github/             # sync/install scripts, patches, and repository tooling
 ```
 
 ## :stopwatch: Time tracking
 
-The Cursor and Claude Code plugins ship hooks that report AI coding activity to a
+The Cursor, Claude Code, and Codex plugins ship hooks that report AI coding activity to a
 [Wakapi](https://github.com/muety/wakapi) server. Wakapi accepts WakaTime heartbeats.
 The hooks call `wakatime-cli --sync-ai-activity`, which reads Claude, Cursor, and Codex
-transcripts and sends them as `ai coding` heartbeats.
+transcripts and sends them as `ai coding` heartbeats. Codex asks you to trust plugin hooks
+before they run (`/hooks`). As of Codex CLI 0.166 the CLI does not run plugin hooks.
+Codex transcripts still get synced whenever the Claude Code or Cursor hooks run.
 
 The hooks exit without doing anything unless every item below is true:
 

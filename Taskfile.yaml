@@ -7,11 +7,11 @@ tasks:
     cmds:
       - task: install:symlink
   install:symlink:
-    desc: Symlink the plugin into ~/.agents/plugins, and add/update the Cursor marketplace
+    desc: Symlink the plugin into ~/.agents/plugins, install it in Codex, and add/update the Cursor marketplace
     cmds:
       - ./.github/scripts/install-symlinks.sh
   refresh:
-    desc: Refresh the installed plugin in Claude Code and Cursor from the git remote (push first)
+    desc: Refresh the installed plugin in Claude Code, Codex, and Cursor from the git remote (push first)
     cmds:
       - ./.github/scripts/refresh-clients.sh
   sync:

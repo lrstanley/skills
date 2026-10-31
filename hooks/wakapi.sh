@@ -42,7 +42,7 @@ state_dir() {
 }
 
 stamp_file() {
-    printf '%s/lrstanley-skills-ai.stamp' "$(state_dir)"
+    printf '%s/%s-ai.stamp' "$(state_dir)" "$plugin_name"
 }
 
 sync_interval() {
@@ -177,7 +177,7 @@ log() {
     dir="$(state_dir)"
     mkdir -p "$dir" || return 0
     file="${dir}/wakatime.log"
-    printf '%s lrstanley-skills wakapi hook: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*" >> "$file"
+    printf '%s %s wakapi hook: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$plugin_name" "$*" >> "$file"
 }
 
 recently_synced() {
@@ -200,13 +200,13 @@ acquire_lock() {
     mkdir -p "$dir" || return 1
 
     if command -v flock >/dev/null 2>&1; then
-        lock="${dir}/lrstanley-skills-ai.lock"
+        lock="${dir}/${plugin_name}-ai.lock"
         exec 9>>"$lock" || return 1
         flock -n 9 || return 1
         return 0
     fi
 
-    lockdir="${dir}/lrstanley-skills-ai.lockdir"
+    lockdir="${dir}/${plugin_name}-ai.lockdir"
     if mkdir "$lockdir" 2>/dev/null; then
         return 0
     fi
@@ -223,8 +223,16 @@ acquire_lock() {
 release_lock() {
     local lockdir
     command -v flock >/dev/null 2>&1 && return 0
-    lockdir="$(state_dir)/lrstanley-skills-ai.lockdir"
+    lockdir="$(state_dir)/${plugin_name}-ai.lockdir"
     rmdir "$lockdir" 2>/dev/null || true
+}
+
+# codex does not export its version to hooks, so ask the cli ("codex-cli 0.166.0").
+codex_version() {
+    local out
+    out="$(codex --version 2>/dev/null || true)"
+    out="${out##* }"
+    printf '%s' "${out:-unknown}"
 }
 
 plugin_arg() {
@@ -234,17 +242,20 @@ plugin_arg() {
     case "$editor" in
         cursor) version="${CURSOR_VERSION:-unknown}" ;;
         claude-code) version="${CLAUDE_VERSION:-unknown}" ;;
+        codex) version="$(codex_version)" ;;
     esac
     version="$(printf '%s' "$version" | tr -cd 'A-Za-z0-9._-')"
     [[ -n $version ]] || version="unknown"
     case "$editor" in
         cursor) printf 'Cursor/%s %s/wakapi' "$version" "$plugin_name" ;;
         claude-code) printf 'ClaudeCode/%s %s/wakapi' "$version" "$plugin_name" ;;
+        codex) printf 'Codex/%s %s/wakapi' "$version" "$plugin_name" ;;
         *) printf '%s/wakapi' "$plugin_name" ;;
     esac
 }
 
 project_dir() {
+    local editor="${1:-}"
     if [[ -n ${CURSOR_PROJECT_DIR:-} && -d ${CURSOR_PROJECT_DIR} ]]; then
         printf '%s' "$CURSOR_PROJECT_DIR"
         return
@@ -252,6 +263,10 @@ project_dir() {
     if [[ -n ${CLAUDE_PROJECT_DIR:-} && -d ${CLAUDE_PROJECT_DIR} ]]; then
         printf '%s' "$CLAUDE_PROJECT_DIR"
         return
+    fi
+    # codex has no project dir variable, and runs hooks from the session cwd.
+    if [[ $editor == codex ]]; then
+        printf '%s' "$PWD"
     fi
 }
 
@@ -312,6 +327,11 @@ detect_editor() {
         printf '%s' "cursor"
         return
     fi
+    # codex sets CLAUDE_PLUGIN_ROOT for compatibility, so check its own variable first.
+    if [[ -n ${PLUGIN_ROOT:-} ]]; then
+        printf '%s' "codex"
+        return
+    fi
     if [[ -n ${CLAUDE_PLUGIN_ROOT:-} ]]; then
         printf '%s' "claude-code"
         return
@@ -329,7 +349,7 @@ hook_main() {
     fi
 
     [[ -n $editor ]] || editor="$(detect_editor)"
-    project="$(project_dir || true)"
+    project="$(project_dir "$editor" || true)"
 
     configured || return 0
     find_cli >/dev/null || return 0

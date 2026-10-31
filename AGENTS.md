@@ -11,12 +11,15 @@
 ## Plugin Layout
 
 This repository is a single [Agent Plugin](https://agent-plugins.org/specification)
-(spec v1.0.0), and also a [Cursor Plugin](https://cursor.com/docs/reference/plugins). The
-repository root is the plugin root for both.
+(spec v1.0.0), a [Cursor Plugin](https://cursor.com/docs/reference/plugins), and a
+[Codex plugin](https://developers.openai.com/codex/plugins). The repository root is the
+plugin root for all of them.
 
 ```text
 .
-├── plugin.json            # Agent Plugins manifest (portable: skills + MCP servers)
+├── plugin.json            # Agent Plugins manifest (portable: skills + MCP servers; Codex reads it)
+├── .agents/plugins/
+│   └── marketplace.json   # Codex marketplace; one local entry (path "./") for the repo root
 ├── .claude-plugin/
 │   └── marketplace.json   # Claude Code marketplace; the entry (source "./") is the plugin manifest
 ├── .cursor-plugin/
@@ -27,6 +30,7 @@ repository root is the plugin root for both.
 ├── hooks/
 │   ├── hooks.json         # Claude Code hooks (auto-discovered; Claude format)
 │   ├── cursor.json        # Cursor hooks (selected by .cursor-plugin/plugin.json)
+│   ├── codex.json         # Codex hooks (selected by plugin.json extensions.com.openai.hooks)
 │   └── wakapi.sh          # shared Wakapi sync; no-ops unless a Wakapi config exists
 └── mcp.json               # (optional) MCP servers, same spec version as plugin.json
 ```
@@ -37,33 +41,45 @@ repository root is the plugin root for both.
   `author`, `homepage`, `repository`, `license`, `keywords`, and `extensions` are allowed
   top-level fields. Client-specific manifest data goes under `extensions`.
 - Keep `name`, `description`, and metadata in `.cursor-plugin/plugin.json`, the plugin
-  entry in `.cursor-plugin/marketplace.json`, and the plugin entry in
-  `.claude-plugin/marketplace.json` in sync with `plugin.json`. There is deliberately no
+  entry in `.cursor-plugin/marketplace.json`, the plugin entry in
+  `.claude-plugin/marketplace.json`, and the plugin entry and `interface` in
+  `.agents/plugins/marketplace.json` in sync with `plugin.json`. Codex-specific manifest
+  data (`hooks`, `interface`) lives under `extensions.com.openai` in `plugin.json`, with
+  paths starting with `./`. Do not add a `.codex-plugin/plugin.json`. There is deliberately no
   `.claude-plugin/plugin.json`, so Claude Code uses the marketplace entry as the manifest.
   Validate with `claude plugin validate .`.
 - The portable spec only defines skills and MCP servers. Other component types are
   client-specific. For Cursor, use `agents/`, `rules/`, `commands/`, and `hooks/` at the
   root (discovered automatically). Files for other clients belong in a top-level directory
   named for that client's reverse-domain namespace (e.g. `com.example.client/`).
-- Cursor and Claude Code both default to `hooks/hooks.json`, and the formats differ.
-  Claude Code auto-discovers `hooks/hooks.json`. `.cursor-plugin/plugin.json` sets
-  `hooks` to `hooks/cursor.json`, which replaces Cursor's folder discovery so Cursor
-  does not parse the Claude file. Both commands run `hooks/wakapi.sh`. Leave that
+- Cursor, Claude Code, and Codex all default to `hooks/hooks.json`. Claude Code
+  auto-discovers `hooks/hooks.json`. `.cursor-plugin/plugin.json` sets `hooks` to
+  `hooks/cursor.json`, which replaces Cursor's folder discovery so Cursor does not parse
+  the Claude file. `plugin.json` sets `extensions.com.openai.hooks` to
+  `./hooks/codex.json`, so Codex reports as `codex` rather than running the Claude file
+  (Codex also sets `CLAUDE_PLUGIN_ROOT`). Codex hooks use `${PLUGIN_ROOT}`, need trusting
+  with `/hooks`, and Codex CLI 0.166 does not run plugin hooks at all. All three run
+  `hooks/wakapi.sh`. Leave that
   split in place. The script exits immediately unless `$WAKATIME_HOME/.wakatime.cfg`
   (`~/.wakatime.cfg` by default) has an `api_url` whose host is outside `wakatime.com`,
   an API key, and `wakatime-cli` is installed. It does not install the CLI or write a
   config.
 - All files must resolve within the repository root. Do not add symlinks that point outside
   of it.
-- Dev-only content (`.github/`, `.cursor/`, `test-prompts/`, `tmp/`) is not part of the
+- Dev-only content (`.github/`, `.cursor/`, `.agents/skills/`, `test-prompts/`, `tmp/`) is not part of the
   plugin's components, and must never be referenced by skills or agents.
 - `./.github/scripts/install-symlinks.sh` (`task`) symlinks the repo root into
-  `~/.agents/plugins/<plugin name>`, and, when the Cursor `agent` CLI is present, runs
-  `agent plugin marketplace add` (or `update`) for this repo. Cursor does not read
-  `~/.agents/plugins`, and indexes from the git remote, so changes must be pushed first.
+  `~/.agents/plugins/<plugin name>`. When the `codex` CLI is present, it adds this repo
+  as a git marketplace (`codex plugin marketplace add <repo> --ref master`, or `upgrade`
+  if already added) and runs `codex plugin add`. When the Cursor `agent` CLI is present,
+  it runs `agent plugin marketplace add` (or `update`) for this repo. Neither client reads
+  `~/.agents/plugins`, and both install from the git remote, so changes must be pushed
+  first. Codex is deliberately not given a local-path marketplace: installs copy the
+  whole plugin root, which would include the ignored `tmp/`.
 - `./.github/scripts/refresh-clients.sh` (`task refresh`) updates the installed plugin in
-  Claude Code and re-indexes the Cursor marketplace, so new skills show up without
-  reinstalling. Push first. Claude Code needs a restart, and Cursor's installed plugin
+  Claude Code and Codex (marketplace upgrade, then `codex plugin add` again) and re-indexes
+  the Cursor marketplace, so new skills show up without reinstalling. Push first. Claude
+  Code needs a restart, Codex needs a new session, and Cursor's installed plugin
   must be updated from its customize page. If the Cursor marketplace was added pinned to a
   commit, the script reports it and prints the remove + `add --git-ref master` fix.
 
