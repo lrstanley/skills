@@ -5,7 +5,6 @@ disable-model-invocation: true
 license: MIT
 metadata:
   author: https://github.com/lrstanley
-  version: "1.0.0"
   domain: devops
   triggers: file pr, open pr, create pr, pull request, pr title, pr description
   role: engineer

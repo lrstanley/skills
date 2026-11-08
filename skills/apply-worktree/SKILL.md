@@ -5,7 +5,6 @@ disable-model-invocation: true
 license: MIT
 metadata:
   author: https://github.com/lrstanley
-  version: "1.0.0"
   domain: devops
   triggers: worktree, apply worktree, land changes, merge back, cleanup worktree
   role: engineer

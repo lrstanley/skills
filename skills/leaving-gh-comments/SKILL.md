@@ -4,7 +4,6 @@ description: Formats comments an agent posts on GitHub on the user's behalf, wit
 license: MIT
 metadata:
   author: https://github.com/lrstanley
-  version: "1.0.0"
   domain: devops
   triggers: github comment, pr comment, review comment, reply to reviewer, reply to bot, issue comment
   role: specialist

@@ -5,7 +5,6 @@ disable-model-invocation: true
 license: MIT
 metadata:
   author: https://github.com/lrstanley
-  version: "1.0.0"
   domain: devops
   triggers: babysit, babysit pr, watch pr, monitor pr, pr checks, ci failures, review bots, pr-wait
   role: engineer

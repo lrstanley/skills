@@ -153,7 +153,6 @@ metadata:
 **Metadata fields (project-specific):**
 
 - `author`: GitHub profile URL of the skill author.
-- `version`: Semantic version string (quoted, e.g., `"1.0.0"`).
 - `domain`: Category from the domain list below.
   - `language`
   - `backend`
