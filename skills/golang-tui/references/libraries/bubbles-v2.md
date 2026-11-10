@@ -18,6 +18,14 @@ m.textinput, cmd = m.textinput.Update(msg)  // correct
 m.textinput.Update(msg)                      // wrong: discards the update
 ```
 
+Because every bubble has `View() string`, it can be placed directly in a bloom layout
+(see `references/libraries/bloom.md`). Size-dependent bubbles (viewport, list, table,
+textarea, progress, help) still need `SetWidth` / `SetHeight` / `SetSize`, fed from
+`bloom.Solve` slot rectangles. For text inputs, bloom can place the real terminal cursor
+(`SetVirtualCursor(false)` plus `bloom.Text(...).Cursor(...)`). For simple scrolling or
+long lists inside a bloom screen, also consider bloom's own scroll, scrollbar, and
+virtualized list nodes: <https://bloomfx.dev/layout/scrolling.md>.
+
 ### Message Flow
 
 Forward all messages to embedded bubbles. Most self-filter (spinners ignore wrong IDs,

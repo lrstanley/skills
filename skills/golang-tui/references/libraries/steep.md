@@ -1,340 +1,153 @@
-# Testing Bubble Tea Applications with steep
+# Testing and Driving Terminal Programs with steep and reel
 
-Use `github.com/lrstanley/x/term/steep` for Bubble Tea integration tests,
-component tests, view assertions, and snapshots. `steep` is the preferred
-alternative to `github.com/charmbracelet/x/exp/teatest/v2`,
-`github.com/charmbracelet/x/exp/golden`, and `github.com/gkampitakis/go-snaps`
-for TUI testing in this skill.
+[steep](https://github.com/lrstanley/steep) (`github.com/lrstanley/steep`) is the default
+for testing terminal programs in this skill. The same repository ships three tools that
+share one terminal emulator, one recording format (asciicast `.cast`), and the same output
+formats and effects:
 
-`steep` runs models through the real Bubble Tea runtime inside an emulated
-terminal (a `reel` session), sends keys, text, mouse events, and resizes,
-waits for output, observes messages, mutates state inside `Update`, and writes
-snapshots under `testdata`. The harness is bound to the `testing.TB` passed to
-`NewHarness`, so methods do not take `t`, and most return `*Harness` for chaining.
+| Tool | Import / install | Use for |
+| --- | --- | --- |
+| steep | `go get github.com/lrstanley/steep@latest` | Go tests of Bubble Tea models, components, or any command on a pseudo-terminal |
+| reel | `go get github.com/lrstanley/steep/reel@latest` | Recording or rendering a terminal from Go outside a test (demos, tooling, custom effects) |
+| reel CLI | `go install github.com/lrstanley/steep/cmd/reel@latest` | Anything without Go: VHS tapes, tape-based tests, recording, rendering `.cast` files, and `reel session` for agents |
 
-Requires Go 1.27+ (generic harness methods such as `Mutate`, `WaitMessage[T]`).
-It was previously `github.com/lrstanley/x/charm/steep`; update old import paths.
+All three are pre-1.0. This file stays high level on purpose. **Read the docs for the
+current API before writing code**; do not rely on memory for option or method names.
 
-Upstream reference: [steep README](https://github.com/lrstanley/x/tree/master/term/steep).
+## Documentation (read these, not this file, for details)
 
-## When to use
+The docs are published as markdown for agents. Start from the section index that matches
+the task, then open only the pages you need:
 
-- Testing a full Bubble Tea root model that implements `tea.Model`.
-- Testing a component model that has `View() string` plus an `Update` method.
-- Waiting for rendered output after key presses, messages, commands, or async
-  work.
-- Asserting view content, ANSI-aware dimensions, observed messages, or snapshots.
-- Recording a failing test as a GIF or asciicast for debugging or docs.
-- Replacing older `teatest`, `golden`, or `go-snaps` guidance in TUI tests.
+- Overview, which tool to use: <https://getsteep.dev/llms.txt>
+- steep (Go test harness): <https://getsteep.dev/steep/llms.txt>
+- reel (Go library): <https://getsteep.dev/reel/llms.txt>
+- reel CLI: <https://getsteep.dev/cli/llms.txt>
+- Agent sessions: <https://getsteep.dev/cli/sessions.md>
+- Everything in one file (large): <https://getsteep.dev/llms-full.txt>
+- API reference: <https://pkg.go.dev/github.com/lrstanley/steep>
+- Runnable examples: <https://github.com/lrstanley/steep/tree/master/_examples>
+
+Every docs page is also available as markdown at its path plus `.md`.
+
+The docs track the default branch, which can be ahead of the latest tag. If a documented
+name or signature does not compile, check the version pinned in `go.mod` with
+`go doc github.com/lrstanley/steep <Symbol>` (or pkg.go.dev for that version), or upgrade.
+
+## steep: what it covers
+
+steep runs a program in an emulated terminal, drives it like a user would, and asserts on
+what it draws. At a high level it provides:
+
+- **Three harnesses**: a root `tea.Model`, a single component (anything with
+  `View() string` plus an `Update` method), or any command on a pseudo-terminal (exec
+  harness, which also covers `main`, flags, and exit status, and works for non-Go or
+  non-Bubble Tea programs).
+- **Input**: keys, typed text, paste, mouse clicks/drags/wheel, focus/blur, resizes.
+- **Waits and checks**: wait for text or conditions, wait for the screen or the message
+  stream to settle, assert or require (stop on failure), and locate text on screen.
+- **Program access** (model and component harnesses): send messages, observe and wait
+  for messages, mutate the model inside `Update`, and inspect the final model.
+- **Terminal state**: title, cursor, clipboard, colors, and what the program asked the
+  terminal for.
+- **Snapshots**: text (with or without ANSI) and JSON golden files under `testdata`,
+  updated with `UPDATE_SNAPSHOTS=true`.
+- **Recordings**: export GIF/video/`.cast`/stills on failure (or always), with effects
+  such as key overlays, configurable from code or `STEEP_*` environment variables, and
+  viewable in the [inspector](https://inspector.getsteep.dev/).
+
+Pick the harness with <https://getsteep.dev/steep/harnesses.md>. For an existing app with
+no tests, follow <https://getsteep.dev/steep/existing-project.md> (start with an exec
+smoke test, then move to model and component tests where they pay off).
+
+## Shape of a test
+
+Illustrative only; check the docs for current names and options.
+
+```go
+package ui
+
+import (
+	"testing"
+
+	"github.com/lrstanley/steep"
+)
+
+func TestNotes(t *testing.T) {
+	h := steep.NewHarness(t, newModel(), steep.WithWindowSize(80, 12))
+	h.Wait("Groceries")
+	h.LeftClick(3, 2).Wait("A terminal garden")
+	h.Key("d").Wait(`Delete "Ideas"?`)
+	h.AssertSnapshot()
+	h.Key("ctrl+c")
+	h.WaitFinished()
+}
+```
+
+The harness is bound to the `testing.TB` it was created with, and most methods chain.
+
+## reel session: agents driving any TUI
+
+`reel session` (`reel s`) runs a program in a detached, recorded terminal and drives it
+one command at a time, reading the screen back as text, JSON, or an image. It needs no
+code, so use it whenever an agent has to operate or verify a terminal program that does
+**not** have steep tests: third-party libraries and apps we are fixing, debugging, or
+adding features to, reproducing a reported bug, or checking a change end to end by hand.
+
+```console
+reel s start --name app --size 100x30 -- go run ./cmd/app
+reel s wait --text "Ready"
+reel s key down down enter
+reel s type "query"
+reel s wait --idle 500ms --print
+reel s screen            # cheap text view of the current screen
+reel s still -o shot.png # look at it as an image when layout or color matters
+reel s stop -o repro.gif -o repro.cast
+```
+
+Guidance for agents (details and flags in <https://getsteep.dev/cli/sessions.md> and
+<https://getsteep.dev/cli/commands/session.md>):
+
+- Never `sleep` between commands; use `reel s wait` (text, regexp, gone, idle).
+- Prefer `reel s screen` (text) for checks; use JSON for colors/cursor, and stills only
+  when visual inspection is needed. Save stills under a temp directory, not the repo.
+- Use `--json` and the stable exit codes for scripted flows, and `reel s do` with a tape
+  to batch several steps in one call.
+- Stop sessions you start. Stopping with outputs keeps the recording as evidence.
+- If the code under test is ours and in Go, turn the reproduction into a steep test.
+
+## reel CLI and reel library
+
+- **Demos and docs GIFs**: `reel run` executes VHS tapes as-is (no browser or `ttyd`).
+  Prefer it over `vhs` for new tapes.
+- **Black-box tests without Go**: `reel test` runs tapes as tests with waits and golden
+  files.
+- **Existing recordings**: `reel export`, `still`, `cut`, `convert`, `info`, and `play`
+  render, trim, and describe `.cast` files from reel, steep, or asciinema.
+- **From Go outside tests**: the `reel` library opens sessions, runs commands, and exports
+  timelines. Inside `go test`, use steep instead, which adds waits, assertions, and failure
+  handling on top of reel.
 
 ## When not to use
 
-- Pure functions that can be tested directly without a Bubble Tea runtime.
-- Slow end-to-end tests that need a real shell session.
-- Visual protocol encoders where asserting stable byte-level invariants is
-  clearer than snapshotting a large binary-heavy payload.
-
-## Root model harness
-
-Use `NewHarness` when the thing under test is the application root model.
-
-```go
-package ui
-
-import (
-	"fmt"
-	"strings"
-	"testing"
-
-	tea "charm.land/bubbletea/v2"
-	"github.com/lrstanley/x/term/steep"
-)
-
-type openCommandMsg struct {
-	Command string
-}
-
-type commandPalette struct {
-	width, height int
-	query         string
-	commands      []string
-	opened        []string
-}
-
-// [...]
-
-func TestCommandPalette(t *testing.T) {
-	model := commandPalette{
-		commands: []string{
-			"vault read secret/data/app",
-			"vault status",
-			"vault token lookup",
-		},
-	}
-	h := steep.NewHarness(t, model, steep.WithWindowSize(48, 8))
-
-	h.Wait([]string{"size=48x8", "vault read", "vault status"})
-	h.Type("status").
-		Wait("query=status").
-		AssertNot("vault read secret/data/app")
-
-	h.Key("enter")
-	selected := h.WaitMessage[openCommandMsg]()
-	h.Wait("opened=vault status")
-
-	if selected.Command != "vault status" {
-		t.Fatalf("selected command = %q, want vault status", selected.Command)
-	}
-}
-```
-
-## Component harness
-
-Use `NewComponentHarness` for non-root components that expose `View() string`
-and one of these update shapes:
-
-```go
-Update(tea.Msg) tea.Cmd
-Update(tea.Msg) (M, tea.Cmd)
-```
-
-This is the main reason to prefer `steep` over older `teatest` guidance:
-component-heavy TUIs can test reusable child models directly instead of wrapping
-everything in a synthetic root model.
-
-```go
-package ui
-
-import (
-	"fmt"
-	"strings"
-	"testing"
-
-	tea "charm.land/bubbletea/v2"
-	"github.com/lrstanley/x/term/steep"
-	"github.com/lrstanley/x/term/steep/snapshot"
-)
-
-type inventoryRow struct {
-	ID   string
-	Name string
-	Type string
-}
-
-type inventoryTable struct {
-	width, height int
-	rows          []inventoryRow
-	filter        string
-	selected      int
-}
-
-// [...]
-
-func TestInventoryTable(t *testing.T) {
-	table := &inventoryTable{}
-	h := steep.NewComponentHarness(t, table, steep.WithWindowSize(32, 6))
-
-	h.Mutate(func(m *inventoryTable) *inventoryTable {
-		m.rows = []inventoryRow{
-			{ID: "secret-app", Name: "secret/app", Type: "kv"},
-			{ID: "database", Name: "database", Type: "database"},
-			{ID: "token", Name: "token", Type: "auth"},
-		}
-		return m
-	})
-	h.Wait([]string{"secret/app", "database", "token"})
-
-	h.Type("j").WaitSettleMessages()
-
-	h.Mutate(func(m *inventoryTable) *inventoryTable {
-		m.filter = "secret"
-		m.selected = 0
-		return m
-	})
-	h.WaitSettle().
-		Assert("secret/app").
-		AssertNot([]string{"database", "token"}).
-		RequireSnapshot(snapshot.WithSuffix("inventory"))
-}
-```
-
-## Common helpers
-
-- `Type("text")` sends one key press per rune. `Key("ctrl+c")`, `KeyUp`,
-  `KeyEsc`, `Paste`, `LeftClick`, `MouseDrag`, `Resize`, `Focus`, and `Blur`
-  drive the terminal. `SendProgram(msg)` sends any event to the program.
-- `Wait`, `WaitNot`, and `WaitFor(cond)` wait for visible output (string,
-  `[]string`, or `[]byte`).
-- `WaitSettle` waits until the screen stops changing. `WaitSettleMessages`
-  waits until `Update` stops receiving messages (see `WithSettle`,
-  `WithSettleIgnoreMsgs` for periodic ticks).
-- `MessageHistory`, `FilterMessagesType[T]`, `WaitMessage[T]`,
-  `WaitMessageWhere[T]`, and `AssertHasMessage[T]` inspect observed messages.
-- `AssertWidth`, `AssertHeight`, `AssertDimensions` (and `Require*`) use
-  ANSI-aware display width.
-- `Assert*` helpers report errors and keep the test running. Use `Require*`
-  helpers when the next step depends on the check passing and should stop
-  immediately.
-- `QuitProgram`, `WaitFinished`, and `FinalModelAs[M]` inspect the final state.
-- Tune with options: `WithTimeout`, `WithCheck`, `WithSettle`, `WithANSI`,
-  `WithEnvVars`, `WithLog`. Most can also be set via `STEEP_*` env vars unless
-  `WithIgnoreEnv(true)`.
-
-Package-level `steep.Assert`, `steep.AssertNot`, `steep.AssertDimensions`, and
-friends take `(t, view, ...)` for a simple value with `View() string` and no
-runtime behavior:
-
-```go
-steep.Assert(t, model, "ready")
-steep.AssertDimensions(t, model, 80, 24)
-```
-
-Harness methods are better when the test depends on window-size messages,
-commands, key input, observed messages, snapshots, or final model state.
-Waits and assertions return `*Harness`, so they chain:
-
-```go
-h.WaitSettle().
-	Assert("ready").
-	AssertNot("loading").
-	RequireSnapshot()
-```
-
-## Mutating models
-
-Prefer to drive models through public behavior: send messages, type keys, or use
-commands that a user could actually trigger. Use `Mutate` when the setup would
-otherwise make a test noisy or impractical, such as seeding large component data
-sets, setting an internal filter, or moving a component into a state that has no
-public message.
-
-`Mutate` runs from inside the Bubble Tea `Update` loop, keeping the harness state
-consistent. `fn` must take and return the model type passed to the harness:
-
-```go
-h.Mutate(func(m *inventoryTable) *inventoryTable {
-	m.rows = rows
-	m.filter = "secret"
-	return m
-})
-```
-
-Use it sparingly. If behavior can be tested by sending messages or typing
-keys, prefer that path because it covers the same route a real user takes.
-
-## Snapshots
-
-`steep` includes `github.com/lrstanley/x/term/steep/snapshot` as an alternative
-to `x/exp/golden` and `go-snaps`. Snapshots are written under `testdata`. Set
-`UPDATE_SNAPSHOTS=true` or pass `snapshot.WithUpdate(true)` to create or update
-snapshots. `STEEP_SNAPSHOT_DIR` sets the default directory (`snapshot.WithDir`
-still wins).
-
-```go
-package ui
-
-import (
-	"bytes"
-	"testing"
-
-	"github.com/lrstanley/x/term/steep/snapshot"
-)
-
-func TestStatusView(t *testing.T) {
-	view := "\x1b[32mcluster=acme-corp\x1b[0m\nstatus=unsealed\ntoken=s.dev-token\n"
-
-	snapshot.AssertEqual(
-		t,
-		view, // Or yourModel.View()
-		snapshot.WithSuffix("status"),
-		snapshot.WithANSI(false),
-		snapshot.WithTransform(func(bts []byte) []byte {
-			return bytes.ReplaceAll(bts, []byte("s.dev-token"), []byte("<token>"))
-		}),
-	)
-}
-```
-
-Use `snapshot.RequireEqual` when a mismatch should stop the test immediately.
-For harnesses, use convenience methods (they follow the harness `WithANSI`
-setting, ANSI is kept by default):
-
-```go
-h.AssertSnapshot(snapshot.WithSuffix("ansi"))
-h.RequireSnapshot(snapshot.WithSuffix("plain"), snapshot.WithANSI(false))
-h.AssertJSON()
-```
-
-Use `WithSuffix` when a test writes more than one snapshot or when a subtest
-needs a descriptive file name. Use `WithANSI(false)`, `WithPrivate(false)`, and
-`WithSpinners(false)` when terminal styling, private-use glyphs, or spinners
-would otherwise make snapshots unstable.
-
-## Recording failures
-
-Nothing is written by default. `WithExportOnFailure()` (or `WithExportAlways()`)
-writes a recording once, at harness close, to `t.ArtifactDir()` (kept with
-`go test -artifacts`) or `WithArtifacts(dir)`. `WithRecording` takes a
-`reel.Profile` for outputs and effects:
-
-```go
-h := steep.NewHarness(t, newModel(),
-	steep.WithRecording(reel.Profile{
-		Outputs: reel.MustFiles("{name}_{status}.gif", "{name}_{status}.cast"),
-		Effects: []reel.Effect{
-			steep.Logo(2 * time.Second),
-			effects.Keys(time.Second),
-			effects.Pause(),
-			steep.Outro(2 * time.Second),
-		},
-	}),
-	steep.WithExportOnFailure(),
-)
-```
-
-Any existing test can be recorded without code changes:
-
-```sh
-STEEP_EXPORT_MODE=on STEEP_EXPORT='{name}.gif?max-bytes=5MB,{name}.cast' go test -artifacts ./...
-```
-
-Other variables: `STEEP_EXPORT_DIR`, `STEEP_EXPORT_FPS`, `STEEP_EXPORT_SPEED`,
-`STEEP_TYPING_DELAY` (pause after each key, for readable recordings),
-`STEEP_RECORD_MESSAGES`. The `.cast` file also holds annotations (inputs,
-waits, assertions, failures, terminal queries) that players ignore.
-
-## Taskfile integration
-
-```yaml
-# yaml-language-server: $schema=https://taskfile.dev/schema.json
-version: "3"
-
-tasks:
-  test:
-    desc: run tests
-    cmds:
-      - go test -count 5 -p 3 ./...
-  test:update:
-    desc: run tests and update snapshots
-    cmds:
-      - UPDATE_SNAPSHOTS=true go test -count 5 -p 3 ./...
-```
+- Pure functions or layout math: test directly. For bloom layouts, `bloom.Render` and
+  `bloom.Solve` cover most cases without a runtime (see `references/libraries/bloom.md`).
+- Do not add `teatest` (`x/exp/teatest`), `x/exp/golden`, or `go-snaps` to new tests;
+  migrate them to steep when touching those tests.
 
 ## Do's
 
-- Prefer `steep` harness tests for root models and component models.
-- Prefer `steep` snapshots for view regression testing.
-- Set size explicitly with `WithWindowSize` when layout matters.
-- Use `WaitSettle` or `WaitSettleMessages` before snapshotting animated,
-  command-driven, or asynchronously updated views.
-- Strip or transform unstable output such as spinner frames, timestamps, tokens,
-  private-use glyphs, or machine-specific paths before comparing snapshots.
+- Set the terminal size explicitly when layout matters.
+- Wait for a stable screen (settle) before snapshotting animated or async views.
+- Drive behavior through user input and messages; mutate the model only when setup
+  would otherwise be impractical.
+- Make output deterministic: strip or transform spinners, timestamps, tokens, and
+  machine-specific paths; give bloom animations a controllable clock.
+- Keep failure recordings in CI as artifacts (see <https://getsteep.dev/steep/ci.md>).
 
 ## Don'ts
 
-- Keep using `teatest`, `x/exp/golden`, or `go-snaps` for new tests when `steep`
-  covers the same behavior.
-- Mutate state when typing keys or sending messages would test the real user
-  path clearly.
-- Snapshot before waiting for a stable view.
-- Update snapshots in CI unless that step is explicitly requested.
+- Use `time.Sleep` in tests or between `reel session` commands.
+- Snapshot before the view settles.
+- Update snapshots in CI unless explicitly requested.
+- Write recordings or stills into the working tree unless they are deliverables.

@@ -57,40 +57,35 @@ Always use `ansi.StringWidth` or `lipgloss.Width` for:
 - Padding computations
 - Any comparison to terminal width/height
 
-## VHS for Demo Recording
+## Reproducing and Inspecting a Running TUI
 
-[VHS](https://github.com/charmbracelet/vhs) records terminal sessions as GIFs using
-a tape file format:
+To see what a program actually draws, use the reel CLI from steep (see
+`references/libraries/steep.md`) instead of guessing from code:
+
+- **Agents** (and scripts): `reel session` starts the program in a detached terminal,
+  sends keys, waits for text, and prints the screen as text, JSON, or a PNG still. Use it
+  for programs without steep tests, including third-party libraries we are fixing.
+  <https://getsteep.dev/cli/sessions.md>
+- **Go tests**: a steep harness with failure recordings shows exactly what the screen
+  looked like when a test failed; open the `.cast` in the
+  [inspector](https://inspector.getsteep.dev/) to step through events.
+- **Layout bugs with bloom**: `bloom.Solve` reports each node's rectangle, and the bloom
+  troubleshooting page covers blank screens, double clicks, stuck animations, and
+  wrapping: <https://bloomfx.dev/resources/troubleshooting.md>.
+
+## Demo Recording
+
+`reel run` executes [VHS](https://github.com/charmbracelet/vhs)-syntax tapes with its own
+renderer (no browser or `ttyd`), so existing VHS tapes run as they are. Prefer it over
+`vhs` for README GIFs and screenshots. Tape syntax and settings:
+<https://getsteep.dev/cli/tapes.md>.
 
 ```bash
-go run github.com/charmbracelet/vhs@latest demo.tape
+go run github.com/lrstanley/steep/cmd/reel@latest run demo.tape
 ```
 
-Example `demo.tape`:
-
-```vhs
-Output tmp/demo.gif
-Set FontSize 14
-Set Width 1200
-Set Height 600
-
-Type "myapp"
-Enter
-Sleep 2s
-Type "j"
-Sleep 500ms
-Type "j"
-Sleep 500ms
-Enter
-Sleep 2s
-Type "q"
-```
-
-Useful for:
-
-- README demo GIFs
-- Reproducible (but temporary) visual regression testing
-- Bug report screenshots
+`reel test` runs tapes as black-box tests with waits and golden files, which is useful
+for non-Go programs; for Go programs, prefer steep tests.
 
 ### Taskfile Integration
 
@@ -100,7 +95,7 @@ tape:
   deps: [build]
   cmds:
     - mkdir -p tmp/
-    - go run github.com/charmbracelet/vhs@latest demo.tape
+    - go run github.com/lrstanley/steep/cmd/reel@latest run demo.tape
 ```
 
 ## pprof Integration
@@ -158,5 +153,7 @@ Run the app with `--enable-pprof`, then in another terminal run the profile task
 | Garbled output after crash | Raw mode not restored | Wrap program in panic handler, ensure `p.Kill()` on panic |
 | Spinner not animating | Forgot to return `Tick` from Init | Return `m.spinner.Tick` from `Init()` |
 | Input not working | Component not focused | Call `.Focus()` and use the returned `tea.Cmd` |
-| Layout overflow | Not accounting for borders | Subtract 2 from height for top+bottom border or use `<style>.GetVerticalBorderSize()` |
-| Misaligned panels | Text wrapping in bordered panels | Truncate all text to `panelWidth - 4` |
+| Layout overflow | Not accounting for borders, or hand-computed widths | Lay out with bloom slots; otherwise use `<style>.GetVerticalFrameSize()` / `GetHorizontalFrameSize()` |
+| Misaligned panels | Text wrapping in bordered panels | Use bloom `Text(...).Truncate()`, or truncate to the inner width (`panelWidth - style.GetHorizontalFrameSize()`) |
+| Clicks hit the wrong item | Manual X/Y hit testing drifts from what was drawn | Attach `bloom/on` handlers to the nodes themselves |
+| Behavior unclear from code | Not observing the real screen | Drive it with `reel session` or a steep test with failure recordings |

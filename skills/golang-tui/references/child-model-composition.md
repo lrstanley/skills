@@ -8,12 +8,13 @@ define a `Component`-style interface that returns only `tea.Cmd` from Update
 
 ```go
 type Component interface {
-    Init()              tea.Cmd
-    Update(msg tea.Msg) tea.Cmd
-    View()              string     // Or *lipgloss.Layer
-    GetHeight()         int        // Optional
-    GetWidth()          int        // Optional
-    GetSize()           (x, y int) // Optional
+    Init()                         tea.Cmd
+    Update(msg tea.Msg)            tea.Cmd
+    Layout(ctx bloom.Context)      bloom.Child // bloom.Layouter: the component's node tree
+    View()                         string      // Fallback outside a bloom layout
+    GetHeight()                    int         // Optional
+    GetWidth()                     int         // Optional
+    GetSize()                      (x, y int)  // Optional
 }
 ```
 
@@ -27,6 +28,7 @@ type Page interface {
     UUID()                string
     Init()                tea.Cmd
     Update(msg tea.Msg)   tea.Cmd
+    Layout(bloom.Context) bloom.Child
     View()                string
     GetHeight()           int
     GetWidth()            int
@@ -59,6 +61,9 @@ func (b *ComponentModel) GetWidth() int       { return b.Width }
 func (b *ComponentModel) GetSize() (int, int) { return b.Width, b.Height }
 ```
 
+Do not give the base struct a default `Layout`: bloom prefers `Layout` over `View`, so an
+embedded empty one would hide a component that only overrides `View`.
+
 Components embed `ComponentModel` and override methods as needed:
 
 ```go
@@ -78,19 +83,47 @@ func (p *MyPanel) Update(msg tea.Msg) tea.Cmd {
     return nil
 }
 
-func (p *MyPanel) View() string {
-    var b strings.Builder
-    for _, item := range p.items {
-        b.WriteString(item.String())
-        b.WriteByte('\n')
-    }
-    return b.String()
-}
+// Layout and View as shown in "Components as bloom nodes" below.
 
 func (p *MyPanel) GetTitle() string {
     return fmt.Sprintf("My Panel (%d items)", len(p.items))
 }
 ```
+
+### Components as bloom nodes
+
+Internally developed components should implement `bloom.Layouter` and return bloom nodes
+from `Layout(ctx bloom.Context) bloom.Child`, instead of flattening themselves to a string
+in `View`. Returning nodes keeps the component's internals part of the parent's tree, so
+its IDs, mouse handlers, focusable controls, scrolling, and animations work, and it can
+change shape with `ctx.Width` / `ctx.Height` rather than taking size options. The parent
+still decides the slot (fixed, fill, grow). `Layout` may be called several times per frame,
+so treat it like `View`: read state, return nodes, never mutate.
+
+Keep a `View()` that renders the same tree, for use outside a bloom layout (and to satisfy
+`bloom.Child`):
+
+```go
+func (p *MyPanel) Layout(ctx bloom.Context) bloom.Child {
+    rows := make([]bloom.Child, 0, len(p.items))
+    for _, item := range p.items {
+        rows = append(rows, bloom.Text(item.String()).Truncate())
+    }
+    return bloom.Column(rows...)
+}
+
+func (p *MyPanel) View() string {
+    return bloom.Render(0, 0, p.Layout(bloom.Context{})) // natural size
+}
+```
+
+A plain `View() string` component **can** still be placed in a bloom tree as is, which is
+the right choice for Bubbles components and simple leaf widgets with no clickable or
+focusable parts. Implement `bloom.Measurer` when such a component knows its size cheaply
+(such as a one-row status bar). Components that render from their own size (viewport,
+list, table) still get it pushed in from the parent via `bloom.Solve`. Details:
+<https://bloomfx.dev/layout/responsive.md> and `references/libraries/bloom.md`. `steep`
+can test these components directly with its component harness.
 
 ## State Machine Pattern
 
@@ -150,6 +183,15 @@ func (m Model) View() tea.View {
 ```
 
 ## Focus Management
+
+Two kinds of focus exist, and they compose:
+
+- **Which child model receives keys** (page vs dialog vs status bar): routed by the parent,
+  as shown below.
+- **Which control inside a screen is focused** (fields, buttons, panes): prefer
+  `bloom.Focus` with focusable node IDs, which gives tab order from the layout, click to
+  focus, and focus scopes for dialogs and panels. See <https://bloomfx.dev/input/focus.md>.
+
 
 ### Focus IDs
 
@@ -258,20 +300,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     return m, nil
 }
 
-func (m Model) View() tea.View {
-    content := m.page.View()
+func (m *Model) layout() bloom.Child {
+    var layers []bloom.LayerNode
     if m.dialog != nil {
-        // Use lipgloss compositor for overlay.
-        page := lipgloss.NewLayer(content)
-
-        // Could be extended to multiple dialogs.
-        dialog := lipgloss.NewLayer(m.dialog.View()).
-            X(m.width/4).Y(m.height/4).Z(1)
-        content = lipgloss.NewCompositor(page, dialog).Render()
+        // Centered, modal, and dims the page beneath. See bloom docs for
+        // transitions (Presence), shadows, anchoring, and stacking.
+        layers = append(layers, bloom.Layer(m.dialog).Modal().Backdrop(fx.Dim{Amount: 0.5}))
     }
-    return tea.NewView(content)
+    return bloom.Overlay(m.page, layers...)
+}
+
+func (m *Model) View() tea.View {
+    return m.ui.View(m.width, m.height, m.layout())
 }
 ```
+
+Use bloom layers (see `references/libraries/bloom.md` and
+<https://bloomfx.dev/layers/dialogs.md>) rather than positioning `lipgloss.Layer`s by hand
+with a `Compositor`: bloom centers or anchors the dialog, makes it modal for mouse input,
+confines focus to it, and can animate it in and out. Dropdowns and toasts use the same
+layer mechanism.
 
 ### Opening and Closing Dialogs
 

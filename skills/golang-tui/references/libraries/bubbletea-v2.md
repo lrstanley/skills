@@ -196,6 +196,12 @@ See `references/keymaps.md` for the recommended pattern.
 
 ## Mouse Handling
 
+For hit testing (which item, button, or pane was clicked or hovered), use bloom: attach
+handlers from `bloom/on` to the nodes they belong to and bloom routes events to the node
+under the pointer, including modal layers and drags. See
+<https://bloomfx.dev/input/mouse.md>. Handle raw mouse messages yourself only for simple
+cases such as global wheel scrolling.
+
 Enable mouse in View, handle events in Update:
 
 ```go

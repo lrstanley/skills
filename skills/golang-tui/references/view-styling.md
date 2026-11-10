@@ -183,39 +183,68 @@ case tea.BackgroundColorMsg:
     m.styles = newStyles(msg.IsDark())
 ```
 
-## Responsive Layout
+## Layout: use bloom
 
-Always use stored dimensions from `tea.WindowSizeMsg`. Never hardcode terminal dimensions.
+Build screen layout with bloom (see `references/libraries/bloom.md`) instead of computing
+widths by hand and joining strings. Describe regions as slots (fixed, fill, weighted grow,
+percent, min/max, collapsible) and let bloom size, place, and clip them on every resize.
+That removes most of the off-by-N bugs below, and handles overlays, mouse targets, focus,
+and animation in the same tree.
+
+```go
+func (m *model) layout() bloom.Child {
+    return bloom.Column(
+        header, // natural height
+        bloom.Fill(bloom.Row(
+            bloom.Grow(1, bloom.Box(panel, m.list)).ID(paneList).Min(24).Collapsible(1),
+            bloom.Grow(2, bloom.Box(panel, m.preview)).ID(panePreview),
+        )),
+        m.statusbar,
+    )
+}
+```
+
+Rules that still apply with bloom:
+
+- Always use stored dimensions from `tea.WindowSizeMsg`. Never hardcode terminal size.
+- Components that render from their own size (viewport, list, table, textarea) need that
+  size pushed in from `Update` using `bloom.Solve` on the same tree. A slot rectangle
+  includes the box frame, so subtract the style's frame size (see "Border Accounting").
+- Weights (accordion focus, 75/25 preview) map to `Grow(weight, ...)` slots; switch the
+  weights in the tree based on model state instead of recomputing widths.
+- Decide what disappears first on small terminals with min sizes and collapse
+  priorities, and keep a "window too small" fallback for truly tiny sizes.
+
+## Layout without bloom
+
+Use manual Lip Gloss math only inside a small leaf component's own `View`, for inline
+(non-fullscreen) output, or in code we do not own that does not use bloom.
 
 ### Full-bleed vs inset width (common bug)
 
-Use **one width budget per layout region**, derived from what actually constrains
-that region. A single `contentW := m.width - N` reused for every block is a frequent
-source of off-by-N gaps (e.g. a bordered header bar stopping short of the screen edge).
+Use **one width budget per layout region**, derived from what actually constrains that
+region. A single `contentW := m.width - N` reused for every block is a frequent source of
+off-by-N gaps (e.g. a bordered header bar stopping short of the screen edge).
 
-- **Full-bleed** chrome (status bar, header box that spans the terminal): set the
-  block’s outer width to `m.width` (or the parent content width) unless a **real**
-  outer margin/padding applies in that same view branch.
+- **Full-bleed** chrome (status bar, header box that spans the terminal): set the block's
+  outer width to `m.width` (or the parent content width) unless a **real** outer
+  margin/padding applies in that same view branch.
 - **Inset** content (form fields under `Padding(0, 2)`, sidebar gutter, split panes):
-  subtract only the margins/padding/borders **that wrap that content**, e.g.
-  `m.width - outerPaddingLeft - outerPaddingRight`.
+  subtract only the margins/padding/borders **that wrap that content**.
 
 ```go
 // Inset: this branch wraps content with Padding(0, 2) -> 4 columns horizontal inset.
-formW := max(0, m.width-4)
+formW := max(0, m.width-outerStyle.GetHorizontalFrameSize())
 
 // Full-bleed: no horizontal padding on this branch -> use full terminal width.
 header := headerStyle.Width(m.width).Render(...)
 ```
 
-Do not subtract "form gutter" width from list-mode or header widgets unless those
-widgets live inside the same padded container.
-
 ### Truncation inside bordered / padded blocks
 
-`lipgloss` `Width(w)` on a style usually sets the **outer** width of the rendered
-block (including border and padding). Plain-text truncation (`ansi.Truncate`,
-runewidth) must use the **inner** text budget:
+`lipgloss` `Width(w)` on a style sets the **outer** width of the rendered block (including
+border and padding). Plain-text truncation (`ansi.Truncate`, runewidth) must use the
+**inner** text budget. Inside bloom, prefer `bloom.Text(s).Truncate()` instead.
 
 ```go
 inner := max(0, m.width-boxStyle.GetHorizontalFrameSize())
@@ -223,101 +252,35 @@ text := ansi.Truncate(raw, inner, "…")
 out := boxStyle.Width(m.width).Render(text)
 ```
 
-## Weight-Based Layout
+### Proportional widths
 
-Use proportional weights instead of fixed pixel widths. Weights scale correctly
-across any terminal size.
+When splitting space by hand, use weights rather than fixed widths, and give the
+remainder to the last region so the total always matches:
 
 ```go
-const (
-    leftWeight = 1
-    rightWeight = 1
-)
-
-// Calculate:
 totalWeight := leftWeight + rightWeight
-leftWidth := (totalWidth * leftWeight) / totalWeight
-rightWidth := totalWidth - leftWidth
-```
+leftW := (m.width * leftWeight) / totalWeight
+rightW := m.width - leftW
 
-### Common Weight Patterns
-
-```go
-// Equal split (50/50): weights 1 and 1
-//   leftW = (totalWidth * 1) / (1 + 1)
-//   rightW = totalWidth - leftW
-
-// Accordion: focused panel gets 2x weight (about 66/33)
-//   if focus is left:  use weights 2 and 1
-//   if focus is right: use weights 1 and 2
-//   same formula as above with leftWeight/rightWeight taken from that pair
-
-// Three panels (50/25/25): e.g. main weight 2, each side weight 1
-//   totalW = 2 + 1 + 1
-//   mainW = (totalWidth * 2) / totalW
-//   remaining = totalWidth - mainW
-//   each sideW = remaining / 2  // adjust if you need a splitter column between them
-
-// Preview mode (75/25): weights 3 and 1
-//   contentW = (totalWidth * 3) / (3 + 1)
-//   previewW = totalWidth - contentW
-```
-
-### Weight-Based Rendering
-
-```go
-const (
-    leftWeight  = 1
-    rightWeight = 1
+return lipgloss.JoinHorizontal(
+    lipgloss.Top,
+    panelStyle.Width(leftW).Render(m.leftContent()),
+    panelStyle.Width(rightW).Render(m.rightContent()),
 )
-
-func (m *ChildModel) Update(msg tea.Msg) tea.Cmd {
-    switch msg := msg.(type) {
-    case tea.WindowSizeMsg:
-        m.height = msg.Height
-        m.width = msg.Width
-
-        // Calculate the weights.
-        totalWeight := leftWeight + rightWeight
-        m.leftPanelWidth = (m.width * leftWeight) / totalWeight
-        m.rightPanelWidth = m.width - m.leftPanelWidth
-        return nil
-    // [...]
-    }
-    // [...]
-    return nil
-}
-
-func (m *ChildModel) View() string {
-    return lipgloss.JoinHorizontal(
-        lipgloss.Top,
-        panelStyle.Width(m.leftPanelWidth).Render(m.leftContent()),
-        panelStyle.Width(m.rightPanelWidth).Render(m.rightContent()),
-    )
-}
 ```
 
 ## Border Accounting
 
 Borders and padding add to the **frame** of a block. Prefer `GetHorizontalFrameSize()` /
-`GetVerticalFrameSize()` on the same `lipgloss.Style` you render with, so border
-width, padding, and margins stay in sync if the style changes.
-
-### Vertical
-
-Borders add to the total height. Subtract 2 (top + bottom border) from content
-height calculations (or use `GetVerticalBorderSize()` on the style if available), e.g:
+`GetVerticalFrameSize()` on the same `lipgloss.Style` you render with, so border width,
+padding, and margins stay in sync if the style changes. This applies both to manual
+layouts and to sizing a component from a bloom `Solve` rectangle:
 
 ```go
-func (m *ChildModel) Update(msg tea.Msg) tea.Cmd {
-    switch msg := msg.(type) {
-    case tea.WindowSizeMsg:
-        m.height = msg.Height
-        m.width = msg.Width
-
-        m.contentPanel.SetHeight(m.height - 3 - 1 - m.contentStyles.GetVerticalBorderSize()) // 3 = title bar, 1 = status bar
-        return nil
-    // [...]
+func (m *model) resize() {
+    if r, ok := bloom.Solve(m.width, m.height, m.layout()).Rect(paneLog); ok {
+        m.log.SetWidth(r.Dx() - panel.GetHorizontalFrameSize())
+        m.log.SetHeight(r.Dy() - panel.GetVerticalFrameSize())
     }
-    // [...]
+}
 ```

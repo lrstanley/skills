@@ -18,6 +18,10 @@ instead of reading all history.
 1. **Collect references:** grep `skills/` and `README.md` for `github.com/<owner>/<repo>` and Go import paths
    (`go.dev`/`pkg.go.dev` links, `import` blocks). Dedupe to a repo list. Do `lrstanley/*` first, then
    the rest. Skip `lrstanley/skills`, and skip skills synced via `remotes.yaml` (use `task up` for those).
+   Always include `lrstanley/bloom` and `lrstanley/steep` (see **Docs-first libraries**).
+   Check for moves: if `gh api repos/<o>/<r>` redirects or a Go package now lives in its own module (as
+   steep did, from `lrstanley/x/term/steep` to `lrstanley/steep`), update every import path, link, and
+   install command that uses the old location.
 2. **Cheap check per repo** (parallelize; use `gh api`):
    - Compare HEAD sha and latest release tag to state. Unchanged: skip.
    - Changed: `gh api repos/<o>/<r>/compare/<old>...HEAD --jq '.files[].filename'` (names only), plus release
@@ -31,6 +35,30 @@ instead of reading all history.
    only, README table if scope changes). Verify new APIs against pkg.go.dev or source before documenting.
 5. **Save state** for every repo checked (including no-change ones) only after its edits are done.
    Never commit.
+
+## Docs-first libraries
+
+Some libraries publish agent-oriented docs, so the skill only keeps a high-level map and points at them:
+
+| Repo | Skill file | Docs indexes |
+| --- | --- | --- |
+| `lrstanley/bloom` | `skills/golang-tui/references/libraries/bloom.md` | `https://bloomfx.dev/llms.txt` |
+| `lrstanley/steep` (steep, reel, reel CLI) | `skills/golang-tui/references/libraries/steep.md` | `https://getsteep.dev/llms.txt`, `/steep/llms.txt`, `/reel/llms.txt`, `/cli/llms.txt` |
+
+For these:
+
+- Diff the `llms.txt` indexes and `docs/content/` (page added, removed, or renamed) rather than reading
+  every API change. A new docs page or package usually means a new line in the skill's feature map; a
+  removed one means deleting that line or link.
+- Keep the skill at the capability level: what the library covers, when to use it, and where the docs
+  are. Do not copy option names, flags, signatures, or tables into the skill; link the docs page instead.
+- Verify every link and docs URL in the skill still resolves (`curl -fsSI`).
+- Check that code snippets in the skill, and in other golang-tui references that use these libraries
+  (layout, dialogs, mouse, focus, testing, demo recording), still compile against the default branch.
+  Update or shrink them instead of adding new detail.
+- Keep the golang-tui `SKILL.md` defaults intact: bloom for layout/layers/input/motion, steep for tests,
+  `reel session` for agents driving TUIs without steep tests. Update its routing table and triggers if a
+  major capability is added or removed.
 
 ## Output
 

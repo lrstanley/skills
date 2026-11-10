@@ -25,8 +25,10 @@ type Model struct {
 var _ tea.Model = (*Model)(nil)
 ```
 
-Always store `width` and `height` from `tea.WindowSizeMsg`. These drive all layout
-calculations in View.
+Always store `width` and `height` from `tea.WindowSizeMsg`. These drive the layout in
+View. When the screen is laid out with bloom, pass them to `ui.View(w, h, tree)` and size
+child components from `bloom.Solve` rather than subtracting header/footer heights by hand
+(see `references/libraries/bloom.md`).
 
 ## Init
 
@@ -104,6 +106,10 @@ case tea.WindowSizeMsg:
     m.progress.SetWidth(msg.Width - padding)
     m.help.SetWidth(msg.Width)
 ```
+
+With bloom, replace the hand-computed sizes with one `resize()` method that runs
+`bloom.Solve(m.width, m.height, m.layout())` and sets each component from its slot
+rectangle by ID (minus the box frame). Call it on resize and whenever the layout changes.
 
 ### Key Handling with key.Matches
 

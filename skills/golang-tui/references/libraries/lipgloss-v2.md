@@ -191,6 +191,12 @@ side explicitly means only those render.
 
 ## Layout
 
+For screen-level layout (panes, headers/status bars, overlays, dialogs, mouse targets),
+use bloom instead of the primitives below; `bloom.Box` and `bloom.Text(...).Style(...)`
+take Lip Gloss styles, so styling stays here. See `references/libraries/bloom.md`. Use the
+primitives below inside a small leaf component's `View`, for inline output, or in code
+that does not use bloom.
+
 ### Join Blocks
 
 ```go
@@ -233,7 +239,9 @@ b := lipgloss.NewLayer(overlay).X(10).Y(5).Z(2)
 lipgloss.NewCompositor(a, b).Render()
 ```
 
-Useful for dialog overlays, floating panels, and backdrop effects.
+Low-level primitive. For dialogs, dropdowns, toasts, and backdrops in an app, prefer
+bloom layers (`bloom.Overlay` / `bloom.Layer`), which also handle placement, modality,
+focus, and transitions.
 
 ### Canvas
 
@@ -338,6 +346,9 @@ lipgloss.JoinVertical(lipgloss.Left, head.Render(title), frame.Render(body))
 ```
 
 ### Two-Column Layout
+
+In an app screen, prefer bloom: `bloom.Row(bloom.Fill(bloom.Box(col, left)), bloom.Fill(bloom.Box(col, right)))`.
+Without bloom:
 
 ```go
 col := lipgloss.NewStyle().Width(total / 2).Padding(1, 2)

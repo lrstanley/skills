@@ -1,5 +1,42 @@
 # Terminal Standards
 
+## Terminal Integration
+
+Modern terminals expose more than a grid of cells: tab and window titles, a progress
+indicator in the tab or taskbar, program status, focus events, the clipboard, clickable
+links, the working directory, and notifications. A TUI that uses the ones relevant to it
+feels native to the terminal and the desktop around it (a long sync showing progress in the
+tab, a status that says it is waiting on the user, a title that names the open file).
+
+Implement them where they fit the app, following these rules:
+
+- **Use Bubble Tea first.** Prefer `tea.View` fields and built-in commands: they are
+  declarative per frame, diffed by the renderer, and restored when the program exits.
+  Fall back to `x/ansi` sequences through `tea.Raw` only for features Bubble Tea does not
+  cover yet. Do not write escape sequences to stdout directly.
+- **Only where the terminal supports it.** Most of these are ignored by terminals that do
+  not support them, but where Bubble Tea offers a query or reply (program status support,
+  keyboard enhancements, terminal version, capabilities), check before depending on it.
+  Never make one required for the app to work.
+- **Keep it meaningful.** Reflect real state (a long job's progress, waiting on input,
+  the current document). Do not flash, spam notifications, or leave stale state behind:
+  reset progress and report a final status before quitting.
+
+| Feature | Use when | Bubble Tea / Charm |
+| --- | --- | --- |
+| Window / tab title | App has a current context (file, host, page) | `view.WindowTitle` |
+| Terminal progress bar (OSC 9;4) | Long-running work with known or unknown progress | `view.ProgressBar` (`tea.NewProgressBar`) |
+| Program status (OSC 7501) | Long-running or agent-style apps: working, blocked on the user, done, failed | `view.ProgramStatus`, `tea.RequestProgramStatusSupport` |
+| Focus events | Pause animations, notify only when unfocused, refresh on return | `view.ReportFocus`, `tea.FocusMsg` / `tea.BlurMsg` |
+| Clipboard (OSC 52) | Copying values out of the TUI | `tea.SetClipboard`, `tea.ReadClipboard`; see `references/clipboard.md` |
+| Hyperlinks (OSC 8) | URLs, file paths, issue IDs in rendered text | `lipgloss.Style.Hyperlink` |
+| Working directory (OSC 7) | File managers, shells, apps that change directory, so new tabs/splits open there | `tea.Raw(ansi.NotifyWorkingDirectory(...))` |
+| Notifications | Long work finishing or input needed while unfocused | `references/libraries/beeep.md`; OSC 9 / OSC 99 via `x/ansi` |
+| Cursor, colors, keyboard, paste, mouse | Covered below | `view.Cursor`, `view.KeyboardEnhancements`, `view.MouseMode`, ... |
+
+Check the current Bubble Tea docs (`go doc charm.land/bubbletea/v2 View`) for the full set
+of view fields and commands; new terminal features usually land there first.
+
 ## Environment Variables
 
 ### TERM
@@ -142,10 +179,11 @@ auto-repeat. Not every terminal implements the full set; always handle the basel
 
 ### OSC 9 taskbar / shell progress (Windows Terminal and similar)
 
-Some terminals show progress in the window or tab using OSC `9;4` sequences.
-`github.com/charmbracelet/x/ansi` provides `SetProgressBar`, `SetErrorProgressBar`,
-`SetWarningProgressBar`, `SetIndeterminateProgressBar`, and `ResetProgressBar`.
-Bubble Tea also provides `view.ProgressBar` for in-TUI progress bars.
+Some terminals show progress in the window or tab using OSC `9;4` sequences. In Bubble
+Tea, set `view.ProgressBar` (from `tea.NewProgressBar(state, value)`) and set it back to
+nil when the work ends; this is the terminal's indicator, not a bar drawn in the TUI.
+`github.com/charmbracelet/x/ansi` has the raw `SetProgressBar` / `ResetProgressBar`
+family for non-Bubble Tea output.
 
 ### OSC 7501 program status (Bubble Tea v2.1+)
 
@@ -202,6 +240,8 @@ your fallback color paths.
 | Focus events | View property | `view.ReportFocus = true` |
 | Bracketed paste | Terminal mode 2004 | `tea.PasteMsg`, optional `DisableBracketedPasteMode`; `ansi.SetModeBracketedPaste` |
 | Keyboard enhancements | Kitty protocol, terminal | `view.KeyboardEnhancements`, `tea.KeyboardEnhancementsMsg`, `KeyReleaseMsg`; `ansi.KittyKeyboard` |
-| OSC progress | Terminal (OSC 9;4) | `ansi.SetProgressBar` and `view.ProgressBar` |
+| OSC progress | Terminal (OSC 9;4) | `view.ProgressBar`; `ansi.SetProgressBar` outside Bubble Tea |
+| Hyperlinks | Terminal (OSC 8) | `lipgloss.Style.Hyperlink` |
+| Working directory | Terminal (OSC 7) | `tea.Raw(ansi.NotifyWorkingDirectory(...))` |
 | Program status | Terminal (OSC 7501) | `view.ProgramStatus`, `tea.RequestProgramStatusSupport` |
 | Images, sixel, Kitty, iTerm2, mosaic | Terminal protocol | `references/images.md` |

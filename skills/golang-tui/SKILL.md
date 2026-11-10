@@ -1,14 +1,15 @@
 ---
 name: golang-tui
 description: >-
-  Expert TUI development in Go with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) and
-  ecosystem packages. Always use when building terminal user interfaces, TUI components,
-  styling terminal output, theming, or working with the Elm Architecture in Go.
+  Expert TUI development in Go with Charm libraries (Bubble Tea, Lip Gloss, Bubbles), bloom
+  for layout, layers, mouse, focus, and animation, and steep/reel for testing, recording, and
+  driving terminal programs. Always use when building, testing, or debugging terminal user
+  interfaces, TUI components, layouts, styling, theming, or the Elm Architecture in Go.
 license: MIT
 metadata:
   author: https://github.com/lrstanley
   domain: frontend
-  triggers: TUI, terminal UI, Bubble Tea, bubbletea, Lip Gloss, lipgloss, Bubbles, charm, terminal app, Elm Architecture, bubbletint, steep, teatest, go-snaps, go-snap, golden files, x/exp/golden, snapshot testing, tea.Model, tea.Cmd, tea.View, terminal styling, terminal components, Go TUI, TERM, COLORTERM, bracketed paste, PasteMsg, Kitty keyboard, OSC 9, terminal progress
+  triggers: TUI, terminal UI, Bubble Tea, bubbletea, Lip Gloss, lipgloss, Bubbles, charm, terminal app, Elm Architecture, bloom, layout, dialog, modal, toast, overlay, animation, transition, mouse, focus, bubblezone, bubbletint, steep, reel, reel session, VHS, tape, teatest, go-snaps, go-snap, golden files, x/exp/golden, snapshot testing, tea.Model, tea.Cmd, tea.View, terminal styling, terminal components, Go TUI, TERM, COLORTERM, bracketed paste, PasteMsg, Kitty keyboard, OSC 9, terminal progress
   role: expert
   scope: implementation
   output-format: code
@@ -18,9 +19,23 @@ metadata:
 # Go TUI Development
 
 Expert Go TUI developer specializing in the Charm ecosystem (Bubble Tea, Lip Gloss,
-Bubbles) and supporting libraries (bubbletint, chroma, go-nf). Builds production-grade
-terminal applications following the Elm Architecture with proper theming, composition,
-and terminal compatibility.
+Bubbles) and supporting libraries (bloom, steep, bubbletint, chroma, go-nf). Builds
+production-grade terminal applications following the Elm Architecture with proper
+theming, composition, and terminal compatibility.
+
+Default library choices:
+
+- **Layout, layers, mouse, focus, scrolling, animation, effects: bloom**
+  (`github.com/lrstanley/bloom`). Describe the screen as a node tree instead of
+  hand-computing widths, joining strings, compositing overlays, or hit testing by X/Y.
+- **Testing: steep** (`github.com/lrstanley/steep`) for model, component, and exec
+  (any binary) tests, snapshots, and failure recordings. Not `teatest` or `go-snaps`.
+- **Driving a TUI as an agent: `reel session`** (reel CLI, from the steep repo) to run,
+  observe, and verify terminal programs that have no steep tests, such as third-party
+  libraries being fixed or extended.
+
+bloom and steep are pre-1.0 and evolve quickly. Their reference files here are maps;
+read the linked `llms.txt` docs for current APIs before writing code.
 
 For TUI UX and layout guidance, [tui-design (hyperskills)](https://skills.sh/hyperb1iss/hyperskills/tui-design) is a recommended companion skill.
 
@@ -29,7 +44,8 @@ For TUI UX and layout guidance, [tui-design (hyperskills)](https://skills.sh/hyp
 1. **Analyze** -- Understand the codebase, component tree, state flow, dimensions (width, height, weights, padding, margins, borders, etc), and theme setup
 2. **Structure** -- Break UI into components (pages, dialogs, etc); keep main.go small
 3. **Implement** -- Elm Architecture (Init/Update/View) with idiomatic Charm library usage, accounting for standard styling, theming, and layout conventions
-4. **Test & Lint** -- Run tests and linters to ensure the codebase is healthy
+4. **Test & Lint** -- Cover behavior with steep tests, run tests and linters, and when needed
+   observe the real screen with `reel session` rather than guessing from code
 5. **Review** -- Ensure changes do not go against this skill's constraints, gotchas, or core patterns
 
 ## Reference Guide
@@ -42,7 +58,8 @@ Load detailed guidance based on context:
 | Bubble Tea Examples | `references/libraries/bubbletea-v2-examples.md` | Use when mapping a feature to an official Bubble Tea example, upstream example pattern, or sample app |
 | Lip Gloss v2 | `references/libraries/lipgloss-v2.md` | Always load when changing layout math inside styled regions, or when using colors, borders, padding, joins, placement, tables, lists, trees, or the compositor |
 | Bubbles v2 | `references/libraries/bubbles-v2.md` | Always load when integrating or troubleshooting Bubbles components such as spinner, textinput, textarea, list, table, tree, viewport, progress, help, paginator, or filepicker |
-| Testing | `references/libraries/steep.md` | Always load when writing or fixing Bubble Tea integration tests, component tests, snapshot tests, golden files, `steep`, `teatest`, `go-snaps`, or `go-snap` workflows |
+| Layout & Motion (bloom) | `references/libraries/bloom.md` | Always load when building or changing screen layout, panes, sizing, responsive collapse, scrolling, dialogs/modals, dropdowns, toasts, mouse handling, focus, animations, transitions, or effects |
+| Testing & Driving TUIs (steep, reel) | `references/libraries/steep.md` | Always load when writing or fixing TUI tests, snapshots, golden files, recordings, demo tapes, migrating from `teatest` / `go-snaps`, or when an agent needs to run and observe a terminal program (`reel session`) |
 | Chroma | `references/libraries/chroma-v2.md` | Use when adding syntax highlighting, terminal formatters, chroma styles, or `chromatint` integration |
 | Bubbletint | `references/libraries/bubbletint-v2.md` | Load before building theme registries, tint switching, dynamic theme updates, or theme-aware Chroma output via `chromatint` |
 | Nerd Fonts | `references/libraries/go-nf.md` | Always load when rendering Nerd Font icons or glyphs in user-visible UI so fallback and detection behavior stay correct |
@@ -54,16 +71,16 @@ Load detailed guidance based on context:
 | Child Model Composition | `references/child-model-composition.md` | Load before adopting a `Component` / `Page` interface, focus routing, dialog overlays, drill-down stacks, or bubbles-backed child models |
 | External processes | `references/exec-external.md` | Load before suspending the TUI for `tea.ExecProcess`, pagers, editors, `*exec.Cmd`, or `x/editor` helpers |
 | Keymaps | `references/keymaps.md` | Always load when adding or refactoring centralized key bindings, key groups, `key.Matches`, or help integration |
-| Terminal Standards | `references/terminal-standards.md` | Always load when handling color-profile or background messages, alt screen, bracketed paste, Kitty keyboard enhancements, OSC behavior, or reduced-color testing; raster protocols are summarized with a link to `references/images.md` |
+| Terminal Standards | `references/terminal-standards.md` | Always load when adding terminal integration (window title, terminal progress bar, program status, focus, clipboard, hyperlinks, working directory, notifications), handling color-profile or background messages, alt screen, bracketed paste, Kitty keyboard enhancements, OSC behavior, or reduced-color testing; raster protocols are summarized with a link to `references/images.md` |
 | Terminal images | `references/images.md` | Load before choosing or implementing Sixel, Kitty, iTerm2 OSC 1337, mosaic unicode, `x/ansi` encoders, or image snapshot strategies |
 | Performance | `references/performance.md` | Always load when optimizing `View` hot paths, ANSI-aware width or truncation, allocations, visible-window rendering, `strings.Builder` usage, or FPS tuning |
 | Clipboard | `references/clipboard.md` | Load before implementing clipboard copy/read flows, OSC 52 fallback, native clipboard support, or a dual-write strategy |
 | Configuration | `references/configuration.md` | Load before choosing config/cache paths, file permissions, validation, migration, or `os.UserConfigDir` / XDG conventions |
-| Troubleshooting | `references/troubleshooting.md` | Use when debugging blank screens, freezes, color issues, focus/logging problems, VHS recording, or pprof-based investigation |
+| Troubleshooting | `references/troubleshooting.md` | Use when debugging blank screens, freezes, color issues, focus/logging problems, reproducing what a TUI draws, demo recording, or pprof-based investigation |
 
 ## Core Pattern Example
 
-Minimal Bubble Tea v2 fullscreen application:
+Minimal Bubble Tea v2 fullscreen application, laid out with bloom:
 
 ```go
 package main
@@ -73,16 +90,22 @@ import (
     "os"
 
     tea "charm.land/bubbletea/v2"
+    "charm.land/lipgloss/v2"
+    "github.com/lrstanley/bloom"
 )
 
+var panel = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1)
+
 type model struct {
+    ui            *bloom.Root
     width, height int
     count         int
 }
 
-func (m model) Init() tea.Cmd { return nil }
+func (m *model) Init() tea.Cmd { return m.ui.Init() }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+    cmd := m.ui.Update(msg) // pass every message to the root
     switch msg := msg.(type) {
     case tea.WindowSizeMsg:
         m.width, m.height = msg.Width, msg.Height
@@ -96,18 +119,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             m.count--
         }
     }
-    return m, nil
+    return m, cmd
 }
 
-func (m model) View() tea.View {
-    v := tea.NewView(fmt.Sprintf("Count: %d\n\n  up/down: change -- q: quit\n", m.count))
+func (m *model) layout() bloom.Child {
+    return bloom.Column(
+        bloom.Fill(bloom.Box(panel, bloom.Centered(bloom.Text(fmt.Sprintf("Count: %d", m.count))))),
+        bloom.Text("up/down: change -- q: quit"),
+    )
+}
+
+func (m *model) View() tea.View {
+    v := m.ui.View(m.width, m.height, m.layout())
     v.AltScreen = true
     v.WindowTitle = "My App"
     return v
 }
 
 func main() {
-    if _, err := tea.NewProgram(model{}).Run(); err != nil {
+    if _, err := tea.NewProgram(&model{ui: bloom.New()}).Run(); err != nil {
         fmt.Fprintln(os.Stderr, err)
         os.Exit(1)
     }
@@ -126,8 +156,15 @@ func main() {
   comparison
 - Wrap all I/O (HTTP, file, clipboard, blocking calls, etc) in `tea.Cmd` functions
 - Components (pages, views, dialogs, buttons, status bars, etc) should always be
-  ELM-architecture compliant, not extraneous `Render(...) string` functions
+  ELM-architecture compliant, not extraneous `Render(...) string` functions. Internal
+  components should return bloom nodes via `bloom.Layouter` rather than flattening to a
+  `View() string` (which still works as-is for Bubbles and simple leaf widgets)
 - Keep main.go minimal (flag parsing, dependency creation, tea.NewProgram, error handling)
+- Build screen layout (panes, overlays, dialogs, toasts, mouse targets, focus, animation)
+  with bloom; reach for manual Lip Gloss joins/placement only inside small leaf components
+  or code that does not use bloom (see `references/libraries/bloom.md`)
+- Write new TUI tests with steep, and observe real behavior with `reel session` when
+  working on programs without steep tests (see `references/libraries/steep.md`)
 - Account for borders in layout calculations (subtract 2 from height for top+bottom border
   or use `<style>.GetVerticalBorderSize()` / `GetVerticalFrameSize()`)
 - Derive width **per layout region**: do not reuse one `m.width - N` for full-bleed chrome
@@ -137,6 +174,10 @@ func main() {
   intentionally, hide lower-priority UI first, and render a centered "window too small"
   style warning if the app cannot be used meaningfully at the current size (prefer to only
   do this when the window is really small)
+- Integrate with the terminal where it fits the app: window title, terminal progress bar,
+  program status, focus reporting, clipboard, hyperlinks, working directory, notifications.
+  Use Bubble Tea's built-in support, only when the terminal supports it, and never make
+  it required (see `references/terminal-standards.md`)
 - Always show most frequently used keybinds/help text for the user to know what to do. If
   there are extensive keybinds, opt for a separate help menu or dialog.
 
@@ -153,16 +194,22 @@ func main() {
   - `references/libraries/lipgloss-v2.md`
 - Let important content overflow, clip, or disappear without an intentional fallback
   for constrained terminal sizes
+- Add `teatest`, `x/exp/golden`, `go-snaps`, or bubblezone to Bubble Tea v2 code when steep
+  or bloom covers the need
+- Rely on remembered bloom/steep API names; check the linked docs, since both are pre-1.0
+- Use `time.Sleep` to wait for a TUI in tests or `reel session`; wait on screen content
 
 ## Knowledge Reference
 
 Bubble Tea v2, Lip Gloss v2, Bubbles v2, Elm Architecture, tea.Model, tea.Cmd,
 tea.Msg, tea.View, tea.Program, tea.NewView, tea.KeyPressMsg, tea.WindowSizeMsg,
 tea.ColorProfileMsg, tea.BackgroundColorMsg, bubbletint, tint registry, chroma,
-chromatint, go-nf, Nerd Fonts, beeep, x/ansi, x/editor, steep, reel, x/term/steep,
-x/exp/teatest, x/exp/golden, go-snaps, go-snap, lipgloss.JoinHorizontal, lipgloss.JoinVertical,
-lipgloss.Place, lipgloss.Darken, lipgloss.Lighten, lipgloss.LightDark,
-weight-based layout, compositor, spinner, textinput, textarea, list, table,
+chromatint, go-nf, Nerd Fonts, beeep, x/ansi, x/editor, bloom, bloom.Root, bloom.Solve,
+bloom.Render, bloom/anim, bloom/fx, bloom/on, slots, layers, overlays, dialogs, toasts,
+transitions, layout animation, steep, NewHarness, NewComponentHarness, NewExecHarness, reel,
+reel CLI, reel session, VHS tapes, asciicast, x/exp/teatest, x/exp/golden, go-snaps,
+lipgloss.JoinHorizontal, lipgloss.JoinVertical, lipgloss.Place, lipgloss.Darken,
+lipgloss.Lighten, lipgloss.LightDark, weight-based layout, compositor, spinner, textinput, textarea, list, table,
 tree, viewport, paginator, progress, help, filepicker, key.Binding, key.Matches,
 OSC 52, clipboard, colorprofile, alt screen, bracketed paste, PasteMsg,
 KeyboardEnhancements, KeyReleaseMsg, OSC 9 progress, view.ProgressBar,

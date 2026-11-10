@@ -172,7 +172,7 @@ api_key = your-key
 | --- | --- |
 | [golang](skills/golang/SKILL.md) | Idiomatic Go for applications, APIs, CLIs, and performance work -- concurrency, testing, HTTP, errors, tracing, and logging. |
 | [golang-packages](skills/golang-packages/SKILL.md) | Query pkg.go.dev for package and module metadata via pkgsite-cli or the v1beta REST API -- search, versions, symbols, vulnerabilities, and licenses. |
-| [golang-tui](skills/golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles) -- Elm Architecture, theming, composition, and terminal standards. |
+| [golang-tui](skills/golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles), bloom for layout/layers/input/animation, and steep/reel for testing and driving terminal programs -- Elm Architecture, theming, composition, and terminal standards. |
 | [grill-me](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
 | [documentation-writer](skills/documentation-writer/SKILL.md) | Diataxis-guided technical documentation -- tutorials, how-to guides, reference, and explanations with audience-first structure. |
 | [nuclear-review](skills/nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
