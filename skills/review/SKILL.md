@@ -10,7 +10,7 @@ metadata:
   role: engineer
   scope: review
   output-format: code+analysis
-  related-skills: simplify, nuclear-review, security-audit, babysit-pr
+  related-skills: security-audit, babysit-pr
 ---
 
 # Review

@@ -175,7 +175,6 @@ api_key = your-key
 | [golang-tui](skills/golang-tui/SKILL.md) | Expert TUI development with Charm libraries (Bubble Tea, Lip Gloss, Bubbles), bloom for layout/layers/input/animation, and steep/reel for testing and driving terminal programs -- Elm Architecture, theming, composition, and terminal standards. |
 | [grill-me](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. |
 | [documentation-writer](skills/documentation-writer/SKILL.md) | Diataxis-guided technical documentation -- tutorials, how-to guides, reference, and explanations with audience-first structure. |
-| [nuclear-review](skills/nuclear-review/SKILL.md) | Extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth -- ambitious structural simplification. |
 | [karpathy-guidelines](skills/karpathy-guidelines/SKILL.md) | Behavioral guidelines to reduce common LLM coding mistakes when writing, reviewing, or refactoring code. |
 | [frontend-design](skills/frontend-design/SKILL.md) | Distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. |
 | [shadcn-vue](skills/shadcn-vue/SKILL.md) | Manage shadcn-vue components and projects -- adding, searching, fixing, debugging, styling, and composing UI. |
@@ -189,7 +188,6 @@ api_key = your-key
 | [writing-for-agents](skills/writing-for-agents/SKILL.md) | Guidance for writing documents agents consume -- skills, `AGENTS.md`/`CLAUDE.md`, and docs reached by pointer. |
 | [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 | [apply-worktree](skills/apply-worktree/SKILL.md) | Land a git worktree's commits onto the main worktree's default branch, verify they applied, and clean up the worktree and branch. Invoked explicitly with `/apply-worktree`. |
-| [simplify](skills/simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
 | [review](skills/review/SKILL.md) | Review a change with parallel read-only reviewers (correctness and security, structure, cleanup, performance) picked by its size and risk, fix the real findings, and loop until only nits remain. An on-demand tests tier (`/review tests`) finds low-value tests across a repo. Invoked explicitly with `/review`. |
 | [file-pr](skills/file-pr/SKILL.md) | File a concise pull request that leads with the problem, not an inventory of changes. Invoked explicitly with `/file-pr`. |
 | [babysit-pr](skills/babysit-pr/SKILL.md) | Watch a PR through CI and review bots, fix the real findings, and keep it rebased until it is ready. Invoked explicitly with `/babysit-pr`. |
