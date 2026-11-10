@@ -1,12 +1,12 @@
 ---
 name: review
-description: Review a change with parallel read-only reviewers picked by its size and risk, fix the real findings, and loop until only nits remain. Use for /review.
+description: Review a change with parallel read-only reviewers picked by its size and risk, fix the real findings, and loop until only nits remain. Also offers an on-demand tests tier that finds low-value tests across a repository. Use for /review, or /review tests when cleaning up, pruning, or auditing tests.
 disable-model-invocation: true
 license: MIT
 metadata:
   author: https://github.com/lrstanley
   domain: quality
-  triggers: review, code review, review loop, reviewers, correctness, security, structure, simplify, performance
+  triggers: review, code review, review loop, reviewers, correctness, security, structure, simplify, performance, test cleanup, test quality, prune tests, purge tests, useless tests
   role: engineer
   scope: review
   output-format: code+analysis
@@ -29,6 +29,13 @@ or skip. Their arguments override every default below.
 | Trivial | docs, config, renames, a few lines of obvious logic        | correctness                                      | 1      |
 | Normal  | most feature and fix work                                  | correctness, structure, cleanup, + performance   | 3      |
 | Risky   | security, permissions, auth, data loss, state/concurrency  | all that apply, security checklist on            | 3 to 5 |
+| Tests   | on request only: clean up, prune, audit, or refactor tests | tests, one reviewer per shard (max 3), run alone | 1      |
+
+The **tests tier** is never picked by triage. It runs only when the user asks to clean
+up, purge, prune, audit, or refactor tests (or passes `tests`), runs by itself without
+the other lenses, and covers the whole repository or the paths given instead of a diff.
+For that run, follow [references/tests-tier.md](references/tests-tier.md) in place of
+steps 1-5 below; the reviewer models, ledger, and step 6 report still apply.
 
 - Round 1 is full. Later rounds check only changed code and open findings.
 - Go past 3 rounds only for a risky-tier change while a blocker or should in

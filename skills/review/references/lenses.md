@@ -52,7 +52,8 @@ VERDICT: APPROVE or CHANGES
 
 `<P>` is the lens prefix, so ids stay stable and unique across lenses and
 rounds: `C` correctness (and security), `S` structure, `K` cleanup, `P`
-performance.
+performance. The on-demand tests tier uses `T` and has its own brief and
+checklist in [tests-tier.md](tests-tier.md); it is never mixed with these lenses.
 
 For a later round, add after the header:
 

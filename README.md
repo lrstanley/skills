@@ -190,7 +190,7 @@ api_key = your-key
 | [security-audit](skills/security-audit/SKILL.md) | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 | [apply-worktree](skills/apply-worktree/SKILL.md) | Land a git worktree's commits onto the main worktree's default branch, verify they applied, and clean up the worktree and branch. Invoked explicitly with `/apply-worktree`. |
 | [simplify](skills/simplify/SKILL.md) | Scoped simplification via parallel quality, performance, and reuse review -- targeted cleanup on diffs or explicit scope with a fixed/skipped summary. |
-| [review](skills/review/SKILL.md) | Review a change with parallel read-only reviewers (correctness and security, structure, cleanup, performance) picked by its size and risk, fix the real findings, and loop until only nits remain. Invoked explicitly with `/review`. |
+| [review](skills/review/SKILL.md) | Review a change with parallel read-only reviewers (correctness and security, structure, cleanup, performance) picked by its size and risk, fix the real findings, and loop until only nits remain. An on-demand tests tier (`/review tests`) finds low-value tests across a repo. Invoked explicitly with `/review`. |
 | [file-pr](skills/file-pr/SKILL.md) | File a concise pull request that leads with the problem, not an inventory of changes. Invoked explicitly with `/file-pr`. |
 | [babysit-pr](skills/babysit-pr/SKILL.md) | Watch a PR through CI and review bots, fix the real findings, and keep it rebased until it is ready. Invoked explicitly with `/babysit-pr`. |
 | [modernize](skills/modernize/SKILL.md) | Rebase a stale PR onto the latest base branch and decide whether it should still exist. Invoked explicitly with `/modernize`. |
