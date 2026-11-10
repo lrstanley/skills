@@ -135,15 +135,30 @@ no blocker or should is open. **Stuck**: a finding is still disputed after
 two replies, or the budget ran out. Show both sides in 2-3 lines each and let
 the user decide. Running out of budget is not approval.
 
-Report only this, with no per-finding detail beyond one line each:
+Report as one markdown list, rendered directly, never inside a code fence.
+One top-level item per group, each with its emoji and bold label, and at most
+one nested level beneath it. One line per finding, no further detail. Omit a
+group that has nothing in it, except Review and Checks.
 
+```markdown
+- 🔍 **Review**: <tier> (<why>), <N> rounds, <model and effort>
+  - Lenses: <lenses>
+  - Diff: <before> -> <after> lines
+- 🧪 **Checks**: <what ran and passed; failures or pre-existing warnings>
+- ✅ **Fixed**
+  - `<id>` `<file>:<line>` <what changed>
+- 🚫 **Declined**
+  - `<id>` <one-line reason>
+- ⚠️ **Open**
+  - `<id>` <both sides, briefly>
+- 📌 **Follow-ups**
+  - <out-of-scope or breaking item worth tracking>
+- 🧹 **Nits**: <fixed> fixed, <declined> declined
+  - `<id>` <what changed, or why declined>
 ```
-Review: <tier>, <N> rounds, <lenses>, <model> | diff <before> -> <after>
-Fixed: <id> <file>:<line> <what changed>
-Declined: <id> <one-line reason>
-Follow-ups: <out-of-scope or breaking items worth tracking>
-Open: <stuck items, both sides>   (omit when empty)
-Nits: <fixed> fixed, <declined> declined
-```
+
+After the list, add at most 2-3 short sentences for what the list cannot
+carry, such as a new test or a side effect of a fix. End with the commit
+state.
 
 Leave commits, pushes, and PR comments to the user's request.
