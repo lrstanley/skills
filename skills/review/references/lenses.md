@@ -84,6 +84,14 @@ Find bugs, broken callers, and mismatches with the stated intent.
 - State and concurrency: races, lock ordering, shared mutable state, async
   ordering, retries that double-apply, caches that serve stale data,
   half-applied updates.
+- Implicit state machines: a status field, enum, or set of flags and
+  nullable fields that together encode a lifecycle (loading, retrying,
+  cancelled, closed). List the states and transitions the code can reach,
+  including error, cancel, timeout, and retry paths. Flag a reachable state
+  that a branch or switch does not handle, a `default` or `else` that
+  silently absorbs a state, a transition taken from a state that should not
+  allow it, and combinations no code expects (`done` with `err` set,
+  `loading` after `closed`).
 - Tests that pass without exercising the change, or that assert the wrong
   behavior.
 - Claims in comments, docs, or names that the code does not do.
@@ -91,7 +99,8 @@ Find bugs, broken callers, and mismatches with the stated intent.
 Skip style unless it hides a bug. Rare paths, extra compatibility, and
 speculative inputs the intent does not need are nits.
 
-**should**: a real bug that callers will hit within the intent.
+**should**: a real bug that callers will hit within the intent, including
+a reachable state the code does not handle.
 
 ### Security checklist
 
@@ -142,8 +151,12 @@ are not tied, and everything depends on what changes less.
 - Type boundaries muddied by casts, `any`, `unknown`, optional parameters,
   or ad-hoc object shapes where an explicit type would simplify control
   flow.
-- Repeated conditionals that point at a missing model, dispatcher, or state
-  machine.
+- An implicit state machine: several booleans, nullable fields, or status
+  checks that together stand for one state, or transitions scattered across
+  call sites. Propose the explicit shape: one state field, enum, or tagged
+  union, with transitions in one place, so invalid combinations cannot be
+  represented. Repeated conditionals on the same fields point here, or at a
+  missing model or dispatcher.
 - Refactors that move complexity without reducing the concepts a reader has
   to hold.
 - A file pushed from under 1000 lines to over 1000 lines by this change.

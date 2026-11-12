@@ -6,7 +6,7 @@ license: MIT
 metadata:
   author: https://github.com/lrstanley
   domain: quality
-  triggers: review, code review, review loop, reviewers, correctness, security, structure, simplify, performance, test cleanup, test quality, prune tests, purge tests, useless tests
+  triggers: review, code review, review loop, reviewers, correctness, security, structure, simplify, state machines, performance, test cleanup, test quality, prune tests, purge tests, useless tests
   role: engineer
   scope: review
   output-format: code+analysis
