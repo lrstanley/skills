@@ -21,3 +21,5 @@ Land this worktree's work onto the main worktree's default branch, then clean up
 5. **Clean up**: from the main worktree, run `git worktree remove <worktree>` and `git branch -d <branch>`. If either is denied or refused, leave it in place and say what remains.
 
 Report the commits applied and what was removed or left behind. Pushing is out of scope.
+
+If the work implements a Linear issue, apply the `linear` skill's Finishing rules once step 4 passes.

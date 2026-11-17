@@ -193,6 +193,7 @@ api_key = your-key
 | [file-pr](skills/file-pr/SKILL.md) | File a concise pull request that leads with the problem, not an inventory of changes. Invoked explicitly with `/file-pr`. |
 | [babysit-pr](skills/babysit-pr/SKILL.md) | Watch a PR through CI and review bots, fix the real findings, and keep it rebased until it is ready. Invoked explicitly with `/babysit-pr`. |
 | [modernize](skills/modernize/SKILL.md) | Rebase a stale PR onto the latest base branch and decide whether it should still exist. Invoked explicitly with `/modernize`. |
+| [linear](skills/linear/SKILL.md) | Move a Linear issue through In Progress and Done while working on it -- project guidance, linked-PR handoff to Linear's GitHub integration, and completeness checks before Done. |
 | [leaving-gh-comments](skills/leaving-gh-comments/SKILL.md) | Format comments an agent posts on GitHub on the user's behalf, with attribution and a secrets check. |
 
 <!-- template:begin:support -->
