@@ -1,6 +1,6 @@
 ---
 name: linear
-description: Status and project-guidance rules for working on a Linear issue. Use when the user references a Linear issue (an ID like ENG-123 or a Linear URL) and asks to implement, fix, or work on it, or when landing that work on the default branch.
+description: Status, project-guidance, and privacy rules for working on a Linear issue. Use when the user references a Linear issue (an ID like ENG-123 or a Linear URL) and asks to implement, fix, or work on it, or when landing that work on the default branch.
 license: MIT
 metadata:
   author: https://github.com/lrstanley
@@ -57,6 +57,17 @@ Set an issue to Done only when every condition holds:
 - It is fully complete. Check the description, acceptance criteria,
   checklists, and sub-issues against what you built. If anything is missing,
   leave it In Progress, list the gaps, and ask the user before setting Done.
+
+## Keep Linear internal
+
+Linear identifiers, URLs, and phrases like `Fixes LS-31` stay in Linear and the
+chat. Code, comments, docs, commit messages, pull requests, review comments,
+and release notes describe the change on its own terms.
+
+```text
+Bad:  fix: sample GIF frames on an FPS clock (LS-42)
+Good: fix: sample GIF frames on an FPS clock
+```
 
 ## Reporting
 
