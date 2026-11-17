@@ -8,7 +8,7 @@
 #   - sync_ai_disabled is not true
 #   - wakatime-cli is on PATH, $WAKATIME_CLI, or $WAKATIME_HOME/.wakatime/wakatime-cli
 #
-# the cli reads claude, cursor, and codex transcripts and sends ai coding heartbeats.
+# the cli reads claude and codex transcripts and sends ai coding heartbeats.
 # syncs are detached and limited to one run per minute so hook storms stay cheap.
 set -euo pipefail
 
@@ -240,14 +240,12 @@ plugin_arg() {
     editor="$(printf '%s' "$1" | tr -cd 'A-Za-z0-9._-')"
     version="unknown"
     case "$editor" in
-        cursor) version="${CURSOR_VERSION:-unknown}" ;;
         claude-code) version="${CLAUDE_VERSION:-unknown}" ;;
         codex) version="$(codex_version)" ;;
     esac
     version="$(printf '%s' "$version" | tr -cd 'A-Za-z0-9._-')"
     [[ -n $version ]] || version="unknown"
     case "$editor" in
-        cursor) printf 'Cursor/%s %s/wakapi' "$version" "$plugin_name" ;;
         claude-code) printf 'ClaudeCode/%s %s/wakapi' "$version" "$plugin_name" ;;
         codex) printf 'Codex/%s %s/wakapi' "$version" "$plugin_name" ;;
         *) printf '%s/wakapi' "$plugin_name" ;;
@@ -256,10 +254,6 @@ plugin_arg() {
 
 project_dir() {
     local editor="${1:-}"
-    if [[ -n ${CURSOR_PROJECT_DIR:-} && -d ${CURSOR_PROJECT_DIR} ]]; then
-        printf '%s' "$CURSOR_PROJECT_DIR"
-        return
-    fi
     if [[ -n ${CLAUDE_PROJECT_DIR:-} && -d ${CLAUDE_PROJECT_DIR} ]]; then
         printf '%s' "$CLAUDE_PROJECT_DIR"
         return
@@ -323,10 +317,6 @@ spawn_sync() {
 }
 
 detect_editor() {
-    if [[ -n ${CURSOR_VERSION:-} || -n ${CURSOR_PLUGIN_ROOT:-} ]]; then
-        printf '%s' "cursor"
-        return
-    fi
     # codex sets CLAUDE_PLUGIN_ROOT for compatibility, so check its own variable first.
     if [[ -n ${PLUGIN_ROOT:-} ]]; then
         printf '%s' "codex"
