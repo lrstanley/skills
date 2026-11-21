@@ -44,10 +44,11 @@ what it draws. At a high level it provides:
   harness, which also covers `main`, flags, and exit status, and works for non-Go or
   non-Bubble Tea programs).
 - **Input**: keys, typed text, paste, mouse clicks/drags/wheel, focus/blur, resizes.
-- **Waits and checks**: wait for text or conditions, wait for the screen or the message
-  stream to settle, assert or require (stop on failure), and locate text on screen.
-- **Program access** (model and component harnesses): send messages, observe and wait
-  for messages, mutate the model inside `Update`, and inspect the final model.
+- **Waits and checks**: wait for text or conditions, wait for the screen (or part of it)
+  to settle, assert or require (stop on failure), and locate text on screen.
+- **Program access** (model and component harnesses): send a message to the program, or
+  quit it. steep tests from outside, through the screen: it does not keep the messages
+  the model receives, or expose the model.
 - **Terminal state**: title, cursor, clipboard, colors, and what the program asked the
   terminal for.
 - **Snapshots**: text (with or without ANSI) and JSON golden files under `testdata`,
@@ -139,8 +140,10 @@ Guidance for agents (details and flags in <https://getsteep.dev/cli/sessions.md>
 
 - Set the terminal size explicitly when layout matters.
 - Wait for a stable screen (settle) before snapshotting animated or async views.
-- Drive behavior through user input and messages; mutate the model only when setup
-  would otherwise be impractical.
+- Drive behavior through user input; send a message only for what input cannot reach,
+  such as a background event.
+- Check state the screen does not show in a plain unit test that calls `Update` (and
+  sends the message a command returns), not through the harness.
 - Make output deterministic: strip or transform spinners, timestamps, tokens, and
   machine-specific paths; give bloom animations a controllable clock.
 - Keep failure recordings in CI as artifacts (see <https://getsteep.dev/steep/ci.md>).
@@ -149,5 +152,7 @@ Guidance for agents (details and flags in <https://getsteep.dev/cli/sessions.md>
 
 - Use `time.Sleep` in tests or between `reel session` commands.
 - Snapshot before the view settles.
+- Assert right after an action without waiting: input returns once sent, before the
+  program has handled it. `Wait` for the response first.
 - Update snapshots in CI unless explicitly requested.
 - Write recordings or stills into the working tree unless they are deliverables.
