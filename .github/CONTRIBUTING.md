@@ -80,22 +80,6 @@ Below are a few guidelines if you would like to contribute:
   the library is needed, simply rewrite it within the library to prevent
   useless imports.
 
-
-
-
-
-
-
-
-
-
-
-### :snake: Python
-
-- All functions/methods/files should use type annotations when available, in
-  addition to ensuring all functions/methods have proper docstrings.
-- This project uses [black](https://github.com/psf/black) for linting Python libraries
-  and scripts. This is an available option in most editors that use a Python language server.
 ### :penguin: Bash/Posix-shell
 
 - This project uses [shellcheck](https://github.com/koalaman/shellcheck) for linting
@@ -105,9 +89,12 @@ Below are a few guidelines if you would like to contribute:
   should generally be used are: `shfmt -s -bn -ci -sr`. This is available in VSCode
   [here](https://marketplace.visualstudio.com/items?itemName=foxundermoon.shell-format).
 
+### :snake: Python
 
-
-
+- All functions/methods/files should use type annotations when available, in
+  addition to ensuring all functions/methods have proper docstrings.
+- This project uses [black](https://github.com/psf/black) for linting Python libraries
+  and scripts. This is an available option in most editors that use a Python language server.
 
 ## :clipboard: References
 
